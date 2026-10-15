@@ -54,11 +54,11 @@ tasks:
 
   - id: S2
     phase: 2
-    owner: Victor
+    owner: Oscar
     title: "Analytics, GDS, ML: queries, services, algorithms, benchmarks"
     criteria: [AC1, AC2, GD1, GD2, OP1, SE6]
     depends_on: [S1]
-    status: todo
+    status: in_review
     pr: ""
     checklist:
       - "5 core Cypher queries (parameterised, with LIMIT), including a complex pattern match"
