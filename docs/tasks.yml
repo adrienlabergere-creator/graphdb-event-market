@@ -40,8 +40,8 @@ tasks:
     title: "Graph and data: data go/no-go, schema, ingestion, diagrams, notebook"
     criteria: [NJ1, NJ2, NJ3, NJ4, NJ5, AC3, SC1, SC3, DC2]
     depends_on: [L0]
-    status: todo
-    pr: ""
+    status: in_review
+    pr: "#2"
     checklist:
       - "Go/no-go: download event and market samples and load them into Neo4j"
       - "docs/DATASETS.md: sources, window, filters, licences, exact reproduction commands"

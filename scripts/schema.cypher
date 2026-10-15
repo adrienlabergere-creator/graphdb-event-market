@@ -1,5 +1,5 @@
-// Draft schema: contract baseline (see docs/GRAPH_CONTRACT.md).
-// Role A finalizes it in task A1. Every statement must be idempotent (IF NOT EXISTS).
+// Graph schema (see docs/GRAPH_CONTRACT.md). Every statement is idempotent (IF NOT EXISTS).
+// Uniqueness constraints also create the index used by the MERGE statements of the ingestion scripts.
 
 CREATE CONSTRAINT event_id IF NOT EXISTS FOR (e:Event) REQUIRE e.event_id IS UNIQUE;
 CREATE CONSTRAINT country_iso3 IF NOT EXISTS FOR (c:Country) REQUIRE c.iso3 IS UNIQUE;

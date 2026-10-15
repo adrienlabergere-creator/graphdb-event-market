@@ -1,18 +1,18 @@
-# Graph contract (draft until stage 1 is merged, then frozen)
+# Graph contract (frozen when stage 1 is merged)
 
-Owner: role A. This is the baseline the team must **defend and may change before the freeze**. After the freeze, changes go through a PR approved by the lead and the owner.
+Owner: role A. After the freeze, a change goes through a PR approved by the owner and one reviewer. Stages 2 and 3 build on this document.
 
 ## Nodes
 
 | Label | Key properties | Notes |
 |---|---|---|
-| `Event` | `event_id` (unique), `date`, `title`, `cameo_code`, `goldstein`, `avg_tone`, `num_mentions`, `source_url` | One node per event in the selected window |
-| `Country` | `iso3` (unique), `name` | |
-| `Theme` | `code` (unique), `label` | Event category used for aggregation |
+| `Event` | `event_id` (unique), `date`, `title`, `cameo_code`, `goldstein`, `avg_tone`, `num_mentions`, `source_url` | One node per event in the selected window. `event_id` is `GDELT-<id>` or `CB-<bank>-<date>` |
+| `Country` | `iso3` (unique), `name` | ISO 3166 alpha-3. `EUR` stands for the euro area (central-bank events of the ECB) |
+| `Theme` | `code` (unique), `label` | Event category used for aggregation: `CAMEO_13` to `CAMEO_19` (tension events) and `MONETARY_POLICY` |
 | `Commodity` | `code` (unique), `name` | For example crude oil |
 | `Currency` | `code` (unique), `name` | For example EURUSD base and quote currencies |
-| `PriceSeries` | `series_id` (unique), `source` (FRED or market data), `ticker`, `name`, `unit` | One per instrument |
-| `TradingDay` | `date` (unique), `is_trading_day` | Calendar-day join key between events and prices |
+| `PriceSeries` | `series_id` (unique), `source`, `ticker`, `name`, `unit`, `kind` (`commodity`, `fx`, `rate` or `index`) | One per instrument |
+| `TradingDay` | `date` (unique), `is_trading_day`, `event_count` | Calendar-day join key between events and prices. Created by events (`false`) or prices (`true`). `event_count` is recomputed after each event load |
 | `Claim` | `claim_id` (unique), `kind`, `status`, `confidence`, `method`, `rationale`, `created_at` | A proposed relation. `status` in `hypothesis`, `verified`, `rejected` |
 
 ## Relationships
@@ -21,11 +21,11 @@ Owner: role A. This is the baseline the team must **defend and may change before
 |---|---|---|
 | `(:Event)-[:OCCURRED_IN]->(:Country)` | | Where the event happened |
 | `(:Event)-[:HAS_THEME]->(:Theme)` | | Category of the event |
-| `(:Event)-[:MENTIONS]->(:Commodity)` and `(:Event)-[:MENTIONS]->(:Currency)` | `weight` | What the event talks about |
+| `(:Event)-[:MENTIONS]->(:Commodity)` and `(:Event)-[:MENTIONS]->(:Currency)` | `weight` | What the event talks about. Defined by the contract, filled by stage 2 if the analysis needs it |
 | `(:Event)-[:ON_DAY]->(:TradingDay)` | | Calendar alignment |
-| `(:PriceSeries)-[:PRICE_ON]->(:TradingDay)` | `close`, `ret_1d` | One price point per day |
-| `(:PriceSeries)-[:TRACKS]->(:Commodity)` and `(:PriceSeries)-[:TRACKS]->(:Currency)` | | Which instrument the series follows |
-| `(:Event)-[:PRECEDES]->(:Event)` | `lag_days` | Temporal sequence of related events |
+| `(:PriceSeries)-[:PRICE_ON]->(:TradingDay)` | `close`, `ret_1d` | One price point per day. `ret_1d` is a simple return, except for `rate` series where it is the change in percentage points |
+| `(:PriceSeries)-[:TRACKS]->(:Commodity)` and `(:PriceSeries)-[:TRACKS]->(:Currency)` | | Which instrument the series follows (rate and index series track nothing) |
+| `(:Event)-[:PRECEDES]->(:Event)` | `lag_days` | Temporal sequence of related events. Defined by the contract, filled by stage 2 if needed |
 | `(:Theme)-[:CORRELATES_WITH]->(:PriceSeries)` | `corr`, `window_days`, `n`, `computed_at` | **Computed statistic, never a causal claim** |
 | `(:Claim)-[:ABOUT_EVENT]->(:Event)` | | Evidence side |
 | `(:Claim)-[:ABOUT_SERIES]->(:PriceSeries)` | | Market side |
