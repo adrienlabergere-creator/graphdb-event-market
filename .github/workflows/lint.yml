@@ -1,0 +1,27 @@
+name: Lint
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Pylint (score must be at least 9.5)
+        run: pylint app scripts --fail-under=9.5
+      - name: Black (format check)
+        run: black --check -l 120 app scripts tests
+      - name: Commit message convention
+        if: github.event_name == 'pull_request'
+        run: bash scripts/check_commit_messages.sh "${{ github.event.pull_request.base.sha }}" "${{ github.event.pull_request.head.sha }}"

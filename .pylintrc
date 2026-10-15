@@ -1,0 +1,16 @@
+[MASTER]
+ignore=.venv,__pycache__,tests
+jobs=1
+
+[FORMAT]
+max-line-length=120
+
+[BASIC]
+good-names=i,j,k,df,ex,_,db
+
+[MESSAGES CONTROL]
+# Pydantic models and small routers have few public methods by design.
+disable=too-few-public-methods
+
+[DESIGN]
+max-args=7

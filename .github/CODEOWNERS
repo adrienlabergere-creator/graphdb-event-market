@@ -1,0 +1,38 @@
+# Fill in the GitHub handles, remove the leading "# " on each line, then commit.
+# The reviewer requested on a PR is the owner of the touched paths.
+#
+# Role A (Graph and data)            : @HANDLE_A
+# Role B (Analytics, GDS, ML)        : @HANDLE_B
+# Role C (Agent and API)             : @HANDLE_C
+# Role D (Infrastructure)            : @HANDLE_D
+# Role E (Quality and CI)            : @HANDLE_E
+#
+# /scripts/schema.cypher             @HANDLE_A
+# /scripts/ingest*.py                @HANDLE_A
+# /app/database/                     @HANDLE_A
+# /docs/graph_schema.*               @HANDLE_A
+# /docs/modeling_rationale.md        @HANDLE_A
+# /docs/DATASETS.md                  @HANDLE_A
+# /demo.ipynb                        @HANDLE_A
+#
+# /app/services/analytics/           @HANDLE_B
+# /scripts/benchmarks/               @HANDLE_B
+# /docs/benchmarks.md                @HANDLE_B
+#
+# /app/agent/                        @HANDLE_C
+# /app/routers/                      @HANDLE_C
+# /app/models/                       @HANDLE_C
+# /docs/llm_guardrails.md            @HANDLE_C
+# /README.md                         @HANDLE_C
+#
+# /docker-compose.yml                @HANDLE_D
+# /Dockerfile                        @HANDLE_D
+# /nginx/                            @HANDLE_D
+# /Makefile                          @HANDLE_D
+# /app/security.py                   @HANDLE_D
+# /docs/architecture.*               @HANDLE_D
+#
+# /tests/                            @HANDLE_E
+# /.github/                          @HANDLE_E
+# /.pylintrc                         @HANDLE_E
+# /scripts/scorecard.py              @HANDLE_E
