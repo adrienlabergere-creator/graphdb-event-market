@@ -2,9 +2,9 @@
 
 Single source of truth for the team. If something is not written here or in `docs/`, ask the group before doing it.
 
-- **Pace:** no calendar. The project advances by phases; a phase opens when the gate of the previous one is met. `make status` always says where we are.
+- **Pace:** no calendar. The project is a relay: one stage per person, in order. A stage starts when the previous one is merged. `make status` always says where we are.
 - **Team:** Adrien, Edgar, Louis, Oscar, Victor
-- **Team lead (to confirm):** Adrien. Coordinates branches and PR reviews, checks contribution balance with `git shortlog -sn`, runs `make score` at the end of each phase.
+- **Team lead (to confirm):** Adrien. Coordinates branches and PR reviews, checks contribution balance with `git shortlog -sn`, runs `make score` at the end of each stage.
 - **Course:** Graph Database and Knowledge, CentraleSupelec. Grading: 100 points, see `SCORECARD.md`.
 
 ## 1. Goal
@@ -24,7 +24,7 @@ In scope: event and market ingestion, graph model, 5 business endpoints plus `/a
 
 Out of scope: web front end, user accounts, real-time streaming, trading signals, extra datasets. Anything else needs an issue and the group's agreement.
 
-## 3. Roles (proposal, swap freely during phase 0)
+## 3. Roles (proposal, swap before the first stage starts)
 
 | Role | Owner | Responsibility | Points |
 |---|---|---|---|
@@ -43,7 +43,7 @@ Ownership by path is in `.github/CODEOWNERS`. The owner reviews every change to 
 - `docs/API_CONTRACT.md`: endpoints, inputs, outputs, status codes, pagination.
 - `docs/AGENT_SPEC.md`: agent graph, tools, guardrails, evaluation.
 
-Contracts are frozen **at the end of phase 0**. After that, a change needs a PR approved by the lead and the owner. This is what keeps five people consistent.
+The graph contract is frozen when stage 1 (Adrien) is merged. The API contract and the agent spec are finalized by Edgar at the start of stage 3, then followed. After a freeze, a change needs a PR approved by the owner and the lead. This is what keeps five people consistent.
 
 ## 5. Git workflow
 
@@ -58,38 +58,32 @@ Contracts are frozen **at the end of phase 0**. After that, a change needs a PR 
 
 ## 6. Definition of done (every task)
 
-- Code merged to `main` through a reviewed PR.
+- Code merged to `main` through a reviewed PR, with tests for your own code.
 - `make lint` >= 9.5 and `make test` green, new code covered by tests.
 - Docstrings on every module, class and function.
 - Contracts and README updated if behavior changed.
 - The criteria IDs it covers are ticked with evidence in `docs/scorecard_manual.yml` where needed.
 
-## 7. Phases and tracking
+## 7. The relay (stages and tracking)
 
-**Where are we?** Run `make status` (or `make status WHO=<Firstname>` for your own next task). The source of truth is `docs/tasks.yml`: every task has an owner, the rubric criteria it covers, its dependencies and a status (`todo`, `in_progress`, `in_review`, `done`). Update your own task **in the PR that delivers it**; a task is `done` only when its PR is merged.
+**Where are we?** Run `make status` (or `make status WHO=<Firstname>` for your own next stage with its checklist). The source of truth is `docs/tasks.yml`: every stage has an owner, a checklist, the rubric criteria it covers, its dependency and a status (`todo`, `in_progress`, `in_review`, `done`). Update your own stage **in the PR that delivers it**; a stage is `done` only when its PR is merged.
 
-A task is ready when all its dependencies are `done`. If nothing is ready for you, review a teammate's PR (reviews are tasks too: see the rotation in section 5).
+**Rule of the relay:** one stage per person. You start when the previous stage is `done`; you finish when your PR is merged. After that you do not go back to your stage, except to fix what a reviewer asks. Your remaining job is to review and approve the PRs of the rotation (the reviewer of a stage is the owner of the next one, which is also how they get to know what they build on).
 
-Target (MVP): one event window with several hundred events, 3 to 5 market series, 5 business endpoints, PageRank and Louvain, one ML pipeline, an agent answering the 10 evaluation questions with guardrails, Docker stack up, tests at 60 percent or more, all documents. Stretch only once the MVP is green: vector search, more series.
-
-| Phase | Name | Gate to leave it | `make score` at the end |
+| Stage | Owner | What | Gate (`make score` target) |
 |---|---|---|---|
-| 0 | Foundations | Repo created and protected, kit on `main`, contracts frozen, data go/no-go done, `docker compose up` works from a clean clone | no minimum |
-| 1 | Data and API | Ingestion works, 5 business endpoints answer on seed data, tests at 60 percent or more | 45 or more |
-| 2 | Analytics and agent | GDS algorithms and ML workflow run, agent answers the evaluation questions with guardrails | 75 or more |
-| 3 | Finish and rehearse | All documents done, README complete, clean-clone run OK, team rehearsal done | 90 or more |
+| 1 | Adrien (A) | Graph and data: go/no-go, schema, ingestion, diagrams, notebook | 45 or more |
+| 2 | Victor (B) | Analytics, GDS, ML, benchmarks | 60 or more |
+| 3 | Edgar (C) | API contracts, endpoints, LangGraph agent, guardrails | 75 or more |
+| 4 | Louis (D) | Docker stack, proxy, Makefile, registry, architecture, screenshots | 85 or more |
+| 5 | Oscar (E) | Tests, coverage, CI, lint sweep, review log, final scorecard | 90 or more |
+| R | All | Defense rehearsal, README contribution table | 90 or more |
 
-**Data go/no-go (task A1):** event and market samples must load into Neo4j. Tell the group as soon as the answer is known, whatever it is.
+Reviews: Victor reviews Adrien, Edgar reviews Victor, Louis reviews Edgar, Oscar reviews Louis, Adrien reviews Oscar. Start reading the previous PR as soon as it is opened: reviewing it is your onboarding.
 
-### Tasks by phase (details and criteria in `docs/tasks.yml`)
+**Scope policy:** every rubric criterion stays, each piece is kept small and complete (a small data window, 3 to 4 agent tools, one simple ML model, short endpoints, a one-page benchmark). Small and finished beats ambitious and unfinished. Stretch only if everything is green: vector search, more series.
 
-| Phase | A. Adrien | B. Victor | C. Edgar | D. Louis | E. Oscar |
-|---|---|---|---|---|---|
-| 0 | L0 repo, kit, protection. A1 data go/no-go, `schema.cypher` | B1 core Cypher drafts, GDS plugin check | C1 API contract, agent spec, Pydantic stubs | D1 clean-clone `docker compose up`, `.env` | E1 CI check, CODEOWNERS, badges |
-| 1 | A2 ingestion scripts | B2 correlation, timeline, shortest-path services | C2 routers, models, errors, `/api/ask` stub | D2 API key, Nginx rules, Makefile, registry image | E2 fixtures and tests, coverage 60 percent |
-| 2 | A3 schema diagram, rationale, appendix | B3 GDS, PageRank, Louvain, ML pipeline | C3 LangGraph agent, guardrails, evaluation set | D3 architecture diagram, clean-clone rehearsal | E3 review log, pylint and docstring sweep |
-| 3 | A4 notebook, final rationale | B4 benchmarks (EXPLAIN, PROFILE) | C4 final README, `llm_guardrails.md` | D4 final Makefile and clean-clone run | E4 final lint, tests, scorecard |
-| 3 | R: everyone rehearses the defense, final `make score`, `git shortlog -sn`, README contribution table | | | | |
+**Data go/no-go** is the first item of stage 1: event and market samples must load into Neo4j. Tell the group as soon as the answer is known, whatever it is.
 
 ## 8. Defense preparation
 

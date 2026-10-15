@@ -1,4 +1,4 @@
-# Graph contract (draft until the end of phase 0, then frozen)
+# Graph contract (draft until stage 1 is merged, then frozen)
 
 Owner: role A. This is the baseline the team must **defend and may change before the freeze**. After the freeze, changes go through a PR approved by the lead and the owner.
 
