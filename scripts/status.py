@@ -176,6 +176,10 @@ def person_section(data: dict, who: str) -> list[str]:
         lines.append(f"Next task: {fmt(task)}")
         lines.append(f"  Rubric criteria: {', '.join(task.get('criteria', [])) or '-'}")
         lines.append(f"  Depends on: {', '.join(task.get('depends_on', [])) or 'nothing'}")
+        for item in task.get("checklist", []):
+            lines.append(f"  [ ] {item}")
+        if task.get("handoff"):
+            lines.append(f"  Hand-off: {task['handoff']}")
     return lines
 
 

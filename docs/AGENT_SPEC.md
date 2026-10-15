@@ -1,4 +1,4 @@
-# Agent specification (draft until the end of phase 0, then frozen)
+# Agent specification (draft, finalized by Edgar at the start of stage 3, then frozen)
 
 Owner: role C. The agent answers questions such as "Why did the 10-year yield move after the June meeting?" by traversing the graph, and shows how it got there.
 

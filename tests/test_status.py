@@ -72,4 +72,5 @@ def test_real_tracker_is_valid():
     data = status.load()
     assert len(data["team"]) == 5
     report = status.build_report(data, "Adrien", with_score=False)
-    assert any(line.startswith("CURRENT PHASE 0") for line in report)
+    assert any(line.startswith("CURRENT PHASE 1") for line in report)
+    assert any("[ ]" in line for line in report)

@@ -1,59 +1,137 @@
 # Project tracker: the single place that says where the project stands.
-# Update your own task in the SAME pull request that delivers it:
+# The project is a relay: ONE stage per person, in order. A stage starts when the previous one is merged
+# and is finished when its PR is merged. After that you only review, approve and fix what a reviewer asks.
+# Update your own stage in the SAME pull request that delivers it:
 #   status: todo | in_progress | in_review | done      pr: PR number or link
 # Read it with:  make status            (everything)
-#                make status WHO=Adrien (your next task)
-# No dates here: the project advances by phases, a phase is open when the previous gate is met.
+#                make status WHO=Adrien (your next stage, with its checklist)
+# No dates here: a stage is ready when the previous one is done.
 
 team:
-  Adrien: {role: A, reviewer: Victor}   # reviewer = who reviews this person's PRs
+  Adrien: {role: A, reviewer: Victor}   # reviewer = who reviews this person's PRs (the next person in the relay)
   Victor: {role: B, reviewer: Edgar}
   Edgar:  {role: C, reviewer: Louis}
   Louis:  {role: D, reviewer: Oscar}
   Oscar:  {role: E, reviewer: Adrien}
 
 phases:
-  0:
-    name: Foundations
-    gate: Repo created and protected, kit on main, contracts frozen, data go/no-go done, docker compose up works from a clean clone
-    min_score: 0
-  1:
-    name: Data and API
-    gate: Ingestion works, 5 business endpoints answer on seed data, tests at 60 percent or more
-    min_score: 45
-  2:
-    name: Analytics and agent
-    gate: GDS algorithms and ML workflow run, agent answers the evaluation questions with guardrails
-    min_score: 75
-  3:
-    name: Finish and rehearse
-    gate: All documents done, README complete, clean-clone run OK, team rehearsal done
-    min_score: 90
+  0: {name: Foundations, gate: "Repo created, kit on main, protection set", min_score: 0}
+  1: {name: "Stage 1 - Graph and data", gate: "Data loads into Neo4j, graph contract frozen, schema and ingestion merged", min_score: 45}
+  2: {name: "Stage 2 - Analytics, GDS, ML", gate: "Services, GDS algorithms, ML workflow and benchmarks merged", min_score: 60}
+  3: {name: "Stage 3 - API and agent", gate: "Endpoints and LangGraph agent with guardrails merged", min_score: 75}
+  4: {name: "Stage 4 - Infrastructure", gate: "Docker stack runs from a clean clone, Makefile complete, image published, screenshots in README", min_score: 85}
+  5: {name: "Stage 5 - Quality and CI", gate: "Tests at 60 percent or more, CI green, pylint 9.5 or more, review log and scorecard final", min_score: 90}
+  6: {name: Rehearsal, gate: "Team has rehearsed the defense, README contribution table filled", min_score: 90}
 
 tasks:
-  # ---------------------------------------------------------------- phase 0
-  - {id: L0, phase: 0, owner: Adrien, title: "Create the repo, invite everyone, commit this kit to main, protect main", criteria: [GT1, GT2], depends_on: [], status: done, pr: "direct push (before protection)"}
-  - {id: E1, phase: 0, owner: Oscar, title: "CI workflows verified, CODEOWNERS filled in, badges in README", criteria: [SE1, SE2, SE3], depends_on: [L0], status: todo, pr: ""}
-  - {id: D1, phase: 0, owner: Louis, title: "docker compose up works from a clean clone, health checks, .env handling", criteria: [DK1, DK2, DK3, DK5], depends_on: [L0], status: todo, pr: ""}
-  - {id: A1, phase: 0, owner: Adrien, title: "Data go/no-go: download samples, docs/DATASETS.md, final scripts/schema.cypher", criteria: [NJ1, NJ2, NJ3, NJ5], depends_on: [L0], status: todo, pr: ""}
-  - {id: C1, phase: 0, owner: Edgar, title: "docs/API_CONTRACT.md and docs/AGENT_SPEC.md finalized, Pydantic stubs", criteria: [FA2], depends_on: [L0], status: todo, pr: ""}
-  - {id: B1, phase: 0, owner: Victor, title: "Draft of the 5 core Cypher queries and GDS algorithm choice, GDS plugin confirmed in the container", criteria: [AC1], depends_on: [L0], status: todo, pr: ""}
-  # ---------------------------------------------------------------- phase 1
-  - {id: A2, phase: 1, owner: Adrien, title: "Ingestion scripts for events and market series (idempotent MERGE, UNWIND batches), make schema", criteria: [NJ4, AC3], depends_on: [A1], status: todo, pr: ""}
-  - {id: B2, phase: 1, owner: Victor, title: "Services: correlation (WITH, aggregations), timeline, shortest paths, with seed-data tests", criteria: [AC1, AC2], depends_on: [B1, A1], status: todo, pr: ""}
-  - {id: C2, phase: 1, owner: Edgar, title: "Routers, Pydantic models, error handling wired to the services, /api/ask stub", criteria: [FA1, FA2, FA3, FA4], depends_on: [C1], status: todo, pr: ""}
-  - {id: D2, phase: 1, owner: Louis, title: "API key on sensitive POST endpoints, Nginx rules, complete Makefile, image on a public registry", criteria: [DK4, SE5, MK1, MK2], depends_on: [D1], status: todo, pr: ""}
-  - {id: E2, phase: 1, owner: Oscar, title: "Seed-graph fixtures, unit, API, Neo4j and Cypher tests, coverage 60 percent or more", criteria: [TS1, TS2, TS3, TS4, TS5], depends_on: [E1], status: todo, pr: ""}
-  # ---------------------------------------------------------------- phase 2
-  - {id: A3, phase: 2, owner: Adrien, title: "Graph schema diagram, modeling rationale, anti-genericity appendix (draft)", criteria: [SC1, SC3], depends_on: [A2], status: todo, pr: ""}
-  - {id: B3, phase: 2, owner: Victor, title: "GDS projection, PageRank, Louvain, ML pipeline producing hypothesis claims", criteria: [GD1, GD2], depends_on: [B2, A2], status: todo, pr: ""}
-  - {id: C3, phase: 2, owner: Edgar, title: "LangGraph agent, tools, structured output, guardrails, evaluation set", criteria: [GD3, GD4], depends_on: [C2, B2], status: todo, pr: ""}
-  - {id: D3, phase: 2, owner: Louis, title: "Architecture diagram, clean-clone rehearsal of make docker-run", criteria: [SC2, MK3], depends_on: [D2], status: todo, pr: ""}
-  - {id: E3, phase: 2, owner: Oscar, title: "Review log, pylint and docstring sweep, scorecard in good state", criteria: [SE4, CC1, CC2, CC3], depends_on: [E2], status: todo, pr: ""}
-  # ---------------------------------------------------------------- phase 3
-  - {id: A4, phase: 3, owner: Adrien, title: "demo.ipynb with visualizations, final modeling rationale", criteria: [DC2, SC3], depends_on: [A3, C3], status: todo, pr: ""}
-  - {id: B4, phase: 3, owner: Victor, title: "docs/benchmarks.md: EXPLAIN and PROFILE, before and after numbers", criteria: [OP1, SE6], depends_on: [B3], status: todo, pr: ""}
-  - {id: C4, phase: 3, owner: Edgar, title: "Final README with screenshots, docs/llm_guardrails.md", criteria: [DC1, GD4], depends_on: [C3], status: todo, pr: ""}
-  - {id: D4, phase: 3, owner: Louis, title: "Final make help, lint, test, docker-run from a clean clone, registry link in README", criteria: [DK5, DK4, MK2], depends_on: [D3], status: todo, pr: ""}
-  - {id: E4, phase: 3, owner: Oscar, title: "Final lint, tests, scorecard and coverage report", criteria: [CC1, TS4, TS5], depends_on: [E3], status: todo, pr: ""}
-  - {id: R, phase: 3, owner: All, title: "Team rehearsal of the defense, final make score and git shortlog -sn, README contribution table", criteria: [GT3, GT4, GT5], depends_on: [A4, B4, C4, D4, E4], status: todo, pr: ""}
+  - id: L0
+    phase: 0
+    owner: Adrien
+    title: "Create the repo, invite everyone, commit the kit to main, protect main"
+    criteria: [GT1, GT2]
+    depends_on: []
+    status: done
+    pr: "direct push (before protection)"
+    checklist: []
+
+  - id: S1
+    phase: 1
+    owner: Adrien
+    title: "Graph and data: data go/no-go, schema, ingestion, diagrams, notebook"
+    criteria: [NJ1, NJ2, NJ3, NJ4, NJ5, AC3, SC1, SC3, DC2]
+    depends_on: [L0]
+    status: todo
+    pr: ""
+    checklist:
+      - "Go/no-go: download event and market samples and load them into Neo4j"
+      - "docs/DATASETS.md: sources, window, filters, licences, exact reproduction commands"
+      - "scripts/schema.cypher final (constraints, indexes) and docs/GRAPH_CONTRACT.md finalized and frozen"
+      - "Ingestion scripts: idempotent MERGE, UNWIND batches, make schema, make ingest"
+      - "Tests for your own code (schema file, ingestion helpers)"
+      - "docs/graph_schema.png and docs/modeling_rationale.md with the anti-genericity appendix"
+      - "demo.ipynb: graph exploration with visualizations (no agent needed)"
+    handoff: "Graph loaded in Neo4j, contract frozen, ingestion reproducible. Victor reviews this PR and starts from it."
+
+  - id: S2
+    phase: 2
+    owner: Victor
+    title: "Analytics, GDS, ML: queries, services, algorithms, benchmarks"
+    criteria: [AC1, AC2, GD1, GD2, OP1, SE6]
+    depends_on: [S1]
+    status: todo
+    pr: ""
+    checklist:
+      - "5 core Cypher queries (parameterised, with LIMIT), including a complex pattern match"
+      - "Services in app/services/analytics/: correlation (WITH, aggregations), timeline, shortest paths"
+      - "GDS projection, PageRank, Louvain"
+      - "One simple ML workflow (link prediction) producing Claim nodes with status hypothesis"
+      - "docs/benchmarks.md: EXPLAIN and PROFILE, before and after an index, real numbers"
+      - "Tests for your own code on a small seed graph"
+    handoff: "Services callable as documented Python functions. Edgar reviews this PR and builds the API and agent on it."
+
+  - id: S3
+    phase: 3
+    owner: Edgar
+    title: "API and agent: contracts, endpoints, LangGraph agent, guardrails"
+    criteria: [FA1, FA2, FA3, FA4, GD3, GD4, DC1]
+    depends_on: [S2]
+    status: todo
+    pr: ""
+    checklist:
+      - "docs/API_CONTRACT.md and docs/AGENT_SPEC.md finalized at the start, then followed"
+      - "Routers and Pydantic models: 5 short endpoints plus /api/ask, proper error handling, Swagger works"
+      - "LangGraph agent with 3 to 4 tools, structured output, graph paths and tool calls exposed"
+      - "Guardrails: read-only Cypher allow-list, schema check, injected LIMIT, facts vs hypotheses, causal-wording filter"
+      - "Evaluation set of 10 questions and results, including one rejected unsafe output; docs/llm_guardrails.md"
+      - "README: description, install, API examples, guardrails summary (screenshots are added in stage 4)"
+      - "Tests for your own code with the LLM mocked"
+    handoff: "API and agent working locally. Louis reviews this PR and containerises the whole stack."
+
+  - id: S4
+    phase: 4
+    owner: Louis
+    title: "Infrastructure: Docker stack, proxy, Makefile, registry, architecture"
+    criteria: [DK1, DK2, DK3, DK4, DK5, SC2, SE5, MK1, MK2, MK3]
+    depends_on: [S3]
+    status: todo
+    pr: ""
+    checklist:
+      - "docker compose up from a clean clone: Neo4j with GDS, local LLM runtime, API, reverse proxy, health checks"
+      - "Dockerfile, .env handling, no secret in Git"
+      - "API key on sensitive POST endpoints and Nginx rules"
+      - "Makefile complete, make help clear, usage documented in the README"
+      - "Image published on a public registry, link in the README"
+      - "docs/architecture.png: services, ports, data flows"
+      - "Screenshots in docs/screenshots and README: Swagger, Neo4j Browser graph, an agent answer with its paths"
+    handoff: "Whole stack runs with make docker-run. Oscar reviews this PR and finishes quality and CI."
+
+  - id: S5
+    phase: 5
+    owner: Oscar
+    title: "Quality and CI: tests, coverage, lint, review log, scorecard"
+    criteria: [CC1, CC2, CC3, TS1, TS2, TS3, TS4, TS5, SE1, SE2, SE3, SE4]
+    depends_on: [S4]
+    status: todo
+    pr: ""
+    checklist:
+      - "Fill gaps in unit, API, Neo4j and Cypher tests; container health tests; coverage 60 percent or more"
+      - "pylint 9.5 or more and docstring sweep over the whole repository; black clean"
+      - "CI green on main (Lint and Tests), badges in the README"
+      - "docs/REVIEW_LOG.md filled from the merged PRs (2 or more comments each)"
+      - "docs/scorecard_manual.yml evidence, final make score, final git shortlog -sn"
+      - "Ask authors to fix leftovers through issues or small PRs"
+    handoff: "Everything green. Adrien reviews this PR. Then the team rehearses."
+
+  - id: R
+    phase: 6
+    owner: All
+    title: "Rehearsal of the defense and README contribution table"
+    criteria: [GT3, GT4, GT5]
+    depends_on: [S5]
+    status: todo
+    pr: ""
+    checklist:
+      - "Everyone reads all docs and prepares the answers of their role (PLAYBOOK section 8)"
+      - "Run the live demo end to end: make help, lint, test, docker-run"
+      - "README contribution table filled from git shortlog -sn and the merged PRs"
+    handoff: ""

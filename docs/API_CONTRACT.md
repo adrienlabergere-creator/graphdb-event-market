@@ -1,4 +1,4 @@
-# API contract (draft until the end of phase 0, then frozen)
+# API contract (draft, finalized by Edgar at the start of stage 3, then frozen)
 
 Owner: role C. Base path `/api`. All responses are JSON validated by Pydantic models. Swagger is served at `/docs`.
 
