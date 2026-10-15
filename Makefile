@@ -1,4 +1,4 @@
-.PHONY: help venv install run docker-build docker-run docker-stop schema test lint format clean tree score score-md status status-md healthcheck
+.PHONY: help venv install run docker-build docker-run docker-stop schema test lint format clean tree score score-md status status-md healthcheck ingest stats
 
 PY ?= python3
 VENV ?= .venv
@@ -13,6 +13,8 @@ help:
 	@echo "  make docker-run    Start the full Docker Compose stack"
 	@echo "  make docker-stop   Stop the Docker Compose stack"
 	@echo "  make schema        Apply constraints and indexes to Neo4j"
+	@echo "  make ingest        Load FRED prices and events into Neo4j (idempotent)"
+	@echo "  make stats         Count nodes and relationships by label and type"
 	@echo "  make test          Run pytest with coverage"
 	@echo "  make lint          Run pylint (score must stay >= 9.5)"
 	@echo "  make format        Run black (line length 120)"
@@ -47,6 +49,12 @@ docker-stop:
 
 schema:
 	@$(ACT) && python -m scripts.apply_schema
+
+ingest:
+	@$(ACT) && python -m scripts.ingest_prices && python -m scripts.ingest_events
+
+stats:
+	@$(ACT) && python -m scripts.graph_stats
 
 test:
 	@$(ACT) && pytest -q --cov=app --cov-report=term-missing --cov-report=xml
