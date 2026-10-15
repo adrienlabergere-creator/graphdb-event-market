@@ -32,7 +32,7 @@ phases:
 
 tasks:
   # ---------------------------------------------------------------- phase 0
-  - {id: L0, phase: 0, owner: Adrien, title: "Create the repo, invite everyone, commit this kit to main, protect main", criteria: [GT1, GT2], depends_on: [], status: todo, pr: ""}
+  - {id: L0, phase: 0, owner: Adrien, title: "Create the repo, invite everyone, commit this kit to main, protect main", criteria: [GT1, GT2], depends_on: [], status: done, pr: "direct push (before protection)"}
   - {id: E1, phase: 0, owner: Oscar, title: "CI workflows verified, CODEOWNERS filled in, badges in README", criteria: [SE1, SE2, SE3], depends_on: [L0], status: todo, pr: ""}
   - {id: D1, phase: 0, owner: Louis, title: "docker compose up works from a clean clone, health checks, .env handling", criteria: [DK1, DK2, DK3, DK5], depends_on: [L0], status: todo, pr: ""}
   - {id: A1, phase: 0, owner: Adrien, title: "Data go/no-go: download samples, docs/DATASETS.md, final scripts/schema.cypher", criteria: [NJ1, NJ2, NJ3, NJ5], depends_on: [L0], status: todo, pr: ""}
