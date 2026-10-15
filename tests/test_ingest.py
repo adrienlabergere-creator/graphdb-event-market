@@ -149,3 +149,9 @@ def test_gdelt_events_keeps_only_events_dated_the_file_day():
     lines = [gdelt_row({0: "1"}), gdelt_row({0: "2", 1: "20220228"})]
     kept = ingest_events.gdelt_events(lines, top=5, min_mentions=20, only_date="2022-03-01")
     assert [e["event_id"] for e in kept] == ["GDELT-1"]
+
+
+def test_vix_is_an_index_without_target():
+    """The VIX is loaded as an index series: it tracks no Commodity or Currency."""
+    vix = next(s for s in ingest_prices.SERIES if s.series_id == "VIX")
+    assert vix.fred_id == "VIXCLS" and vix.kind == "index" and vix.target is None

@@ -7,7 +7,7 @@ Owner: role A. The contract is in `docs/GRAPH_CONTRACT.md`; the diagram is `docs
 The graph links **what happened** (events) to **what the markets did** (prices) through a shared calendar.
 
 - `Event` nodes carry the facts of one event (date, title, CAMEO code, tone, mentions) and connect to a `Country` (`OCCURRED_IN`), a `Theme` (`HAS_THEME`) and a `TradingDay` (`ON_DAY`).
-- `PriceSeries` nodes (Brent, EURUSD, US 10-year yield...) connect to the days they have a price for (`PRICE_ON`, with `close` and `ret_1d` on the relationship) and to the `Commodity` or `Currency` they follow (`TRACKS`).
+- `PriceSeries` nodes (Brent, EURUSD, US 10-year yield, VIX...) connect to the days they have a price for (`PRICE_ON`, with `close` and `ret_1d` on the relationship) and to the `Commodity` or `Currency` they follow (`TRACKS`).
 - `TradingDay` is the meeting point: an event and a price move are linked by sharing a day, and a window of days is a simple traversal.
 - `Claim` nodes hold the relations that the analytics or the agent **propose** (`status` hypothesis, verified or rejected, with a method and a confidence). `CORRELATES_WITH` stores a computed statistic between a theme and a series and never states a cause.
 - Eight uniqueness constraints protect the keys used by `MERGE`, so ingestion is idempotent. Three indexes (`Event.date`, `PriceSeries.ticker`, `Claim.status`) support range filters and the most frequent lookups.

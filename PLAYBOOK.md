@@ -4,12 +4,12 @@ Single source of truth for the team. If something is not written here or in `doc
 
 - **Pace:** no calendar. The project is a relay: one stage per person, in order. A stage starts when the previous one is merged. `make status` always says where we are.
 - **Team:** Adrien, Edgar, Louis, Oscar, Victor
-- **Team lead (to confirm):** Adrien. Coordinates branches and PR reviews, checks contribution balance with `git shortlog -sn`, runs `make score` at the end of each stage.
+- **Coordination:** every stage owner runs `make status`. Contribution balance is checked with `git shortlog -sn`, and `make score` is run at the end of each stage.
 - **Course:** Graph Database and Knowledge, CentraleSupelec. Grading: 100 points, see `SCORECARD.md`.
 
 ## 1. Goal
 
-Build the project "Geopolitical Event / Market Correlation Agent" (subject 10, level 3+), scoped to **central-bank and geopolitical events versus rates, FX and commodity series**.
+Build the project "Geopolitical Event / Market Correlation Agent" (subject 10, level 3+), scoped to **central-bank and geopolitical events versus rates, FX, commodity and volatility series**.
 
 Hard rules from the subject:
 

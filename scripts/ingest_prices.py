@@ -27,7 +27,7 @@ class SeriesSpec:
     fred_id: str
     name: str
     unit: str
-    kind: str  # commodity, fx or rate
+    kind: str  # commodity, fx, rate or index
     target: tuple[str, str, str] | None = None  # (label Commodity or Currency, code, name)
 
 
@@ -46,6 +46,7 @@ SERIES: list[SeriesSpec] = [
     SeriesSpec("EURUSD", "DEXUSEU", "USD per euro", "USD per EUR", "fx", ("Currency", "EUR", "Euro")),
     SeriesSpec("USDJPY", "DEXJPUS", "JPY per USD", "JPY per USD", "fx", ("Currency", "JPY", "Japanese yen")),
     SeriesSpec("US10Y", "DGS10", "US Treasury 10-year yield", "percent", "rate"),
+    SeriesSpec("VIX", "VIXCLS", "CBOE Volatility Index", "index points", "index"),
 ]
 
 UPSERT_SERIES = """
