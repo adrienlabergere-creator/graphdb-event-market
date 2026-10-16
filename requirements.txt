@@ -15,8 +15,8 @@ black>=24.4
 
 # Notebook (demo.ipynb)
 pandas>=2.2
+numpy>=1.26
 matplotlib>=3.8
 
 # To be added by the role owners in their own PRs (not before):
 #   agent:      langgraph, langchain-core, langchain-ollama
-numpy>=1.26
