@@ -1,0 +1,15 @@
+"""Shared constants of the analytics services."""
+
+DEFAULT_START = "2026-02-01"
+DEFAULT_END = "2026-07-31"
+DEFAULT_SERIES = "BRENT"
+SERIES_IDS = ("BRENT", "WTI", "EURUSD", "USDJPY", "US10Y", "VIX")
+
+DEFAULT_LIMIT = 20
+MAX_LIMIT = 200
+MAX_PATH_HOPS = 6
+
+CORRELATION_LAGS = (0, 1, 2, 3)
+MIN_SAMPLES = 30
+
+GRAPH_NAME = "geo_events"

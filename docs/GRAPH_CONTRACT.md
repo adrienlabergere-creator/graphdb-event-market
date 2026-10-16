@@ -26,7 +26,7 @@ Owner: role A. After the freeze, a change goes through a PR approved by the owne
 | `(:PriceSeries)-[:PRICE_ON]->(:TradingDay)` | `close`, `ret_1d` | One price point per day. `ret_1d` is a simple return, except for `rate` series where it is the change in percentage points |
 | `(:PriceSeries)-[:TRACKS]->(:Commodity)` and `(:PriceSeries)-[:TRACKS]->(:Currency)` | | Which instrument the series follows (rate and index series track nothing) |
 | `(:Event)-[:PRECEDES]->(:Event)` | `lag_days` | Temporal sequence of related events. Defined by the contract, filled by stage 2 if needed |
-| `(:Theme)-[:CORRELATES_WITH]->(:PriceSeries)` | `corr`, `window_days`, `n`, `computed_at` | **Computed statistic, never a causal claim** |
+| `(:Theme)-[:CORRELATES_WITH]->(:PriceSeries)` | `lag_days`, `corr`, `window_days`, `n`, `computed_at` | **Computed statistic, never a causal claim.** One relationship per theme, series and lag (`lag_days` 0 to 3: the theme's events of the day `lag_days` before are paired with the day's return) |
 | `(:Claim)-[:ABOUT_EVENT]->(:Event)` | | Evidence side |
 | `(:Claim)-[:ABOUT_SERIES]->(:PriceSeries)` | | Market side |
 
