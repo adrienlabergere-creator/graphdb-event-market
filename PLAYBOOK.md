@@ -29,10 +29,10 @@ Out of scope: web front end, user accounts, real-time streaming, trading signals
 | Role | Owner | Responsibility | Points |
 |---|---|---|---|
 | A. Graph and data | Adrien | Schema, constraints, indexes, ingestion, dataset doc, graph diagram, modeling rationale, notebook | 19 |
-| B. Analytics, GDS, ML | Victor | Pathfinding, pattern matching, GDS, ML workflow, optimization, benchmarks | 19 |
+| B. Analytics, GDS, ML | Oscar | Pathfinding, pattern matching, GDS, ML workflow, optimization, benchmarks | 19 |
 | C. Agent and API | Edgar | FastAPI routers and models, LangGraph agent, guardrails, README | 17 |
-| D. Infrastructure | Louis | Docker Compose, Dockerfile, reverse proxy, API key, Makefile, architecture diagram, registry image | 17 |
-| E. Quality and CI | Oscar | Tests, CI workflows, pylint, docstrings, badges, review log | 18 |
+| D. Infrastructure | Victor | Docker Compose, Dockerfile, reverse proxy, API key, Makefile, architecture diagram, registry image | 17 |
+| E. Quality and CI | Louis | Tests, CI workflows, pylint, docstrings, badges, review log | 18 |
 | All | everyone | Git: branches, balanced commits, one substantial merged PR each, clean messages | 10 |
 
 Ownership by path is in `.github/CODEOWNERS`. The owner reviews every change to their paths.
@@ -73,13 +73,13 @@ The graph contract is frozen when stage 1 (Adrien) is merged. The API contract a
 | Stage | Owner | What | Gate (`make score` target) |
 |---|---|---|---|
 | 1 | Adrien (A) | Graph and data: go/no-go, schema, ingestion, diagrams, notebook | 45 or more |
-| 2 | Victor (B) | Analytics, GDS, ML, benchmarks | 60 or more |
+| 2 | Oscar (B) | Analytics, GDS, ML, benchmarks | 60 or more |
 | 3 | Edgar (C) | API contracts, endpoints, LangGraph agent, guardrails | 75 or more |
-| 4 | Louis (D) | Docker stack, proxy, Makefile, registry, architecture, screenshots | 85 or more |
-| 5 | Oscar (E) | Tests, coverage, CI, lint sweep, review log, final scorecard | 90 or more |
+| 4 | Victor (D) | Docker stack, proxy, Makefile, registry, architecture, screenshots | 85 or more |
+| 5 | Louis (E) | Tests, coverage, CI, lint sweep, review log, final scorecard | 90 or more |
 | R | All | Defense rehearsal, README contribution table | 90 or more |
 
-Reviews: Victor reviews Adrien, Edgar reviews Victor, Louis reviews Edgar, Oscar reviews Louis, Adrien reviews Oscar. Start reading the previous PR as soon as it is opened: reviewing it is your onboarding.
+Reviews: Oscar reviews Adrien, Edgar reviews Oscar, Victor reviews Edgar, Louis reviews Victor, Adrien reviews Louis. Start reading the previous PR as soon as it is opened: reviewing it is your onboarding.
 
 **Scope policy:** every rubric criterion stays, each piece is kept small and complete (a small data window, 3 to 4 agent tools, one simple ML model, short endpoints, a one-page benchmark). Small and finished beats ambitious and unfinished. Stretch only if everything is green: vector search, more series.
 

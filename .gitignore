@@ -25,3 +25,6 @@ data/processed/
 .vscode/
 .idea/
 .DS_Store
+
+# Local Docker Compose override (see docker-compose.override.example.yml)
+docker-compose.override.yml
