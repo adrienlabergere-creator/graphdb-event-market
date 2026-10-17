@@ -75,8 +75,8 @@ tasks:
     title: "API and agent: contracts, endpoints, LangGraph agent, guardrails"
     criteria: [FA1, FA2, FA3, FA4, GD3, GD4, DC1]
     depends_on: [S2]
-    status: todo
-    pr: ""
+    status: in_review
+    pr: "#4"
     checklist:
       - "docs/API_CONTRACT.md and docs/AGENT_SPEC.md finalized at the start, then followed"
       - "Routers and Pydantic models: 5 short endpoints plus /api/ask, proper error handling, Swagger works"
