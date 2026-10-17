@@ -85,16 +85,20 @@ def compose_services() -> dict:
 
 
 def api_paths() -> list[str]:
-    """Business routes (under /api) exposed by the FastAPI app, or [] if it cannot be imported."""
+    """Business routes (under /api) exposed by the FastAPI app, or [] if it cannot be imported.
+
+    The OpenAPI schema is used rather than ``app.routes``: since FastAPI 0.120 an included router stays
+    a lazy ``_IncludedRouter`` object in that list, so filtering on ``APIRoute`` silently returned nothing.
+    """
     sys.path.insert(0, str(ROOT))
     try:
         # pylint: disable=import-outside-toplevel
-        from fastapi.routing import APIRoute
-
         from app.main import app
+
+        paths = app.openapi().get("paths", {})
     except Exception:  # pylint: disable=broad-exception-caught
         return []
-    return sorted({r.path for r in app.routes if isinstance(r, APIRoute) and r.path.startswith("/api")})
+    return sorted(path for path in paths if path.startswith("/api"))
 
 
 def git_lines(*args: str) -> list[str]:
