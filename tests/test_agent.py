@@ -99,3 +99,13 @@ def test_graph_paths_are_reported_without_duplicates():
     """The same path collected twice appears once in the answer."""
     repeated = [["GDELT-1", "2026-07-29", "BRENT"], ["GDELT-2", "2026-07-29", "BRENT"]] * 3
     assert unique_paths(repeated) == [["GDELT-1", "2026-07-29", "BRENT"], ["GDELT-2", "2026-07-29", "BRENT"]]
+
+
+def test_causal_wording_is_rewritten_on_a_verified_answer_too():
+    """The graph never proves a cause, so the filter applies even when the answer is verified."""
+    plan = Plan(tool="graph_query", arguments={"cypher": "MATCH (e:Event) RETURN e.event_id"})
+    llm = FakeLLM([plan], answer=AnswerDraft(answer="Iran events caused the Brent spike.", confidence=0.9))
+    answer = run_agent("Why did Brent spike?", FakeSession(), llm)
+    assert answer.status == "verified"
+    assert "caused" not in answer.answer and "was followed by" in answer.answer
+    assert any("Causal wording" in w for w in answer.warnings)

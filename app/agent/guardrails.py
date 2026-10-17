@@ -40,6 +40,8 @@ ADVICE_PATTERNS = (
     r"\b(place|execute|submit) (an? )?(order|trade)\b",
     r"\bfinancial advice\b",
     r"\bwhat should i (buy|sell|invest)\b",
+    r"\bis (it|now) a good time to (buy|sell|invest|short|trade)\b",
+    r"\bgo (long|short) on\b",
     r"\bdois-je (acheter|vendre|investir)\b",
     r"\bconseil (financier|d'investissement)\b",
 )
@@ -66,11 +68,15 @@ def load_schema(path: Path = CONTRACT) -> dict[str, set[str]]:
     return {"labels": labels, "relationships": rel_types, "properties": props}
 
 
+def strip_comments(query: str) -> str:
+    """Remove Cypher comments (`// ...` and `/* ... */`)."""
+    query = re.sub(r"//[^\n]*", " ", query)
+    return re.sub(r"/\*.*?\*/", " ", query, flags=re.S)
+
+
 def _blank_strings(query: str) -> str:
     """Remove comments and replace string literals by empty ones, so keywords inside text are not analysed."""
-    query = re.sub(r"//[^\n]*", " ", query)
-    query = re.sub(r"/\*.*?\*/", " ", query, flags=re.S)
-    return re.sub(r"'(?:[^'\\]|\\.)*'|\"(?:[^\"\\]|\\.)*\"", "''", query)
+    return re.sub(r"'(?:[^'\\]|\\.)*'|\"(?:[^\"\\]|\\.)*\"", "''", strip_comments(query))
 
 
 def check_read_only(query: str) -> None:
@@ -97,7 +103,8 @@ def check_schema(query: str, schema: dict[str, set[str]] | None = None) -> None:
         for rel in re.split(r"[|:]", group):
             if rel and rel not in schema["relationships"]:
                 raise GuardrailError(f"Unknown relationship type: {rel}")
-    for prop in re.findall(r"\b[A-Za-z_]\w*\.(\w+)", clean) + re.findall(r"\{\s*(\w+)\s*:", clean):
+    # `date.truncate(...)` is a function call, not a property access, so it is left out.
+    for prop in re.findall(r"\b[A-Za-z_]\w*\.(\w+)\b(?!\s*\()", clean) + re.findall(r"\{\s*(\w+)\s*:", clean):
         if prop not in schema["properties"]:
             raise GuardrailError(f"Unknown property: {prop}")
 
@@ -112,8 +119,11 @@ def check_depth(query: str) -> None:
 
 
 def enforce_limit(query: str) -> str:
-    """Guardrail 3b: add a LIMIT when missing and cap the existing one."""
-    query = query.strip().rstrip(";").strip()
+    """Guardrail 3b: add a LIMIT when missing and cap the existing one.
+
+    Comments are stripped first: a query ending with `// ...` would otherwise swallow the injected LIMIT.
+    """
+    query = strip_comments(query).strip().rstrip(";").strip()
     match = re.search(r"\bLIMIT\s+(\d+)\s*$", query, flags=re.I)
     if match is None:
         return f"{query} LIMIT {DEFAULT_LIMIT}"

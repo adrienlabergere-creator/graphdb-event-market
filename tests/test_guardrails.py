@@ -46,7 +46,9 @@ def test_write_or_unsafe_queries_are_rejected(query):
 def test_keywords_inside_strings_and_comments_are_ignored():
     """A word such as DELETE inside a string or a comment is not a clause."""
     query = "// DELETE everything\nMATCH (e:Event) WHERE e.title CONTAINS 'DELETE and CREATE' RETURN e.title"
-    assert g.validate_cypher(query).startswith("// DELETE")
+    checked = g.validate_cypher(query)
+    # The query passes, and the comment is stripped so that it cannot hide the injected LIMIT.
+    assert checked.startswith("MATCH (e:Event)") and "//" not in checked
 
 
 @pytest.mark.parametrize(
@@ -115,3 +117,23 @@ def test_neutral_wording_is_untouched():
     """A statement without cause is not modified."""
     text = "Brent rose the day after the event."
     assert g.rewrite_causal(text) == text and g.find_causal_wording(text) == []
+
+
+def test_a_trailing_comment_cannot_swallow_the_injected_limit():
+    """Guardrail 3b: comments are stripped, so `// ...` at the end cannot hide the LIMIT we add or cap."""
+    capped = g.enforce_limit("MATCH (e:Event) RETURN e.event_id LIMIT 999999 // keep everything")
+    assert capped.endswith(f"LIMIT {g.MAX_LIMIT}") and "//" not in capped
+    added = g.enforce_limit("MATCH (e:Event) RETURN e.event_id // no limit here")
+    assert added.endswith(f"LIMIT {g.DEFAULT_LIMIT}") and "//" not in added
+
+
+def test_function_calls_are_not_read_as_unknown_properties():
+    """Guardrail 2: `date.truncate(...)` is a function call, not a property, and must not be rejected."""
+    g.check_schema("MATCH (d:TradingDay) WHERE d.date > date.truncate('month', d.date) RETURN d.date")
+
+
+def test_more_ways_of_asking_for_advice_are_refused():
+    """Guardrail 7: indirect phrasings are caught too."""
+    assert g.is_financial_advice("Is it a good time to buy oil?")
+    assert g.is_financial_advice("Should I go long on Brent?")
+    assert not g.is_financial_advice("Which events preceded the Brent move?")

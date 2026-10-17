@@ -1,6 +1,7 @@
 """Analytical endpoints built on the analytics services (see docs/API_CONTRACT.md)."""
 
 from typing import Annotated, Literal
+from uuid import uuid4
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 
@@ -88,8 +89,10 @@ def centrality(
     limit: Annotated[int, Query(ge=1, le=100)] = 20,
 ):
     """Countries ranked by PageRank (Graph Data Science)."""
-    gds.project_graph(session)
+    # One projection name per request: two concurrent calls would otherwise drop each other's graph.
+    name = f"{gds.GRAPH_NAME}-{uuid4().hex[:8]}"
+    gds.project_graph(session, name)
     try:
-        return [CentralityItem(**row) for row in gds.page_rank(session, limit=limit)]
+        return [CentralityItem(**row) for row in gds.page_rank(session, name, limit=limit)]
     finally:
-        gds.drop_graph(session)
+        gds.drop_graph(session, name)

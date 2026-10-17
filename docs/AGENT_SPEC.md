@@ -42,7 +42,7 @@ A tool error (`ValidationError`, `GuardrailError`, `ValueError`) becomes a warni
 | 3 | Limits: traversal depth 6 maximum, a `LIMIT` is injected when missing (100) and capped (200), 10 second timeout, read-only Neo4j session | `check_depth`, `enforce_limit`, `graph_query` |
 | 4 | Structured output: `Plan` and `AnswerDraft` are Pydantic models, retried once, then rejected with a warning. The loop stops after 5 tool calls | `with_retry`, `MAX_STEPS` |
 | 5 | Facts versus hypotheses: an answer built on `correlation` or `explain_move` is always `hypothesis`; only `graph_query` facts can be `verified` | `ToolResult.hypothesis`, `AgentAnswer` |
-| 6 | Causal wording filter: "caused", "because of", "led to", "due to", "resulted in", "triggered"... in a hypothesis are rewritten ("was followed by", "in association with") and a warning is added | `find_causal_wording`, `rewrite_causal` |
+| 6 | Causal wording filter: "caused", "because of", "led to", "due to", "resulted in", "triggered"... are rewritten ("was followed by", "in association with") and a warning is added. Applied to **every** answer, verified ones included: the graph shows association, never a cause | `find_causal_wording`, `rewrite_causal` |
 | 7 | No financial advice or orders: "Should I buy...", "place an order", "dois-je acheter..." are refused with an explanation, no tool is called | `is_financial_advice` |
 
 Constants: `MAX_STEPS = 5`, `MAX_DEPTH = 6`, `DEFAULT_LIMIT = 100`, `MAX_LIMIT = 200`, `QUERY_TIMEOUT_S = 10`.

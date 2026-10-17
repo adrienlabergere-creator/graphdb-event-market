@@ -113,9 +113,10 @@ def build_graph(session: Any, llm: LLM):
             draft = with_retry(llm.compose, state["question"], state["history"])
         except (ValidationError, ValueError):
             return {"draft": None, "warnings": warnings + [REJECTED]}
-        if state["hypothesis"] and guardrails.find_causal_wording(draft.answer):
+        # Applied to every answer, verified ones included: the graph shows association, never a cause.
+        if guardrails.find_causal_wording(draft.answer):
             draft = AnswerDraft(answer=guardrails.rewrite_causal(draft.answer), confidence=draft.confidence)
-            warnings.append("Causal wording rewritten: the relation is a hypothesis")
+            warnings.append("Causal wording rewritten: the graph shows association, not cause")
         return {"draft": draft, "warnings": warnings}
 
     def answer(state: State) -> State:
