@@ -1,5 +1,5 @@
 # Optional, macOS: use the native Ollama app (Metal GPU, much faster than the CPU-only container) for the agent.
-#   1. Install Ollama from https://ollama.com, then: ollama pull llama3.1:8b
+#   1. Install Ollama from https://ollama.com, then pull the LLM_MODEL of your .env: ollama pull llama3.2:3b
 #   2. cp docker-compose.override.example.yml docker-compose.override.yml   (auto-loaded by docker compose, ignored by Git)
 #   3. make docker-up
 # The ollama and ollama-pull containers are then not started, and the API calls the host through host.docker.internal.

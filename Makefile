@@ -19,7 +19,7 @@ help:
 	@echo "  make docker-stop   Stop the stack (data and model are kept in the volumes)"
 	@echo "  make ps            Show the containers and their health"
 	@echo "  make logs          Follow the logs (SERVICE=api for one service)"
-	@echo "  make model         Download the LLM_MODEL of .env into Ollama (once, about 4.7 GB)"
+	@echo "  make model         Download the LLM_MODEL of .env into Ollama (once, about 2 GB)"
 	@echo "  make seed          Load schema, prices and events into Neo4j from the api container"
 	@echo "  make docker-push   Build the API image for amd64 and arm64 and push it to $(IMAGE)"
 	@echo "  make schema        Apply constraints and indexes to Neo4j"

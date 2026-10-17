@@ -22,7 +22,7 @@ digraph architecture {
             proxy [label=<<b>proxy</b>: Nginx 1.27<br/>127.0.0.1:8080 → :80<br/><font point-size="9">rate limit 20 r/s, /api/ask 10 r/min (429)<br/>timeouts 120 s, /api/ask 300 s<br/>body ≤ 16 KB</font>>, fillcolor="#e3f0fb", color="#2f6ea8"];
             api   [label=<<b>api</b>: FastAPI + LangGraph agent<br/>:8000 (internal only), non-root<br/><font point-size="9">X-API-Key required on POST /api/ask<br/>guardrails: read-only Cypher, schema check, LIMIT<br/>image ghcr.io/victorhenz241-eng/graphdb-event-market-api</font>>, fillcolor="#e6f4ea", color="#2e7d4f"];
             neo4j [label=<<b>neo4j</b>: Neo4j 5.26 + GDS<br/>Bolt 7687, HTTP 7474 (127.0.0.1)<br/><font point-size="9">heap 1 GB, page cache 512 MB</font>>, fillcolor="#fdeee0", color="#c0661c"];
-            ollama [label=<<b>ollama</b>: Ollama 0.40.5<br/>:11434 (internal only)<br/><font point-size="9">model llama3.1:8b, CPU</font>>, fillcolor="#f1ebf9", color="#6b4fa0"];
+            ollama [label=<<b>ollama</b>: Ollama 0.40.5<br/>:11434 (internal only)<br/><font point-size="9">model llama3.2:3b (default), CPU</font>>, fillcolor="#f1ebf9", color="#6b4fa0"];
             pull  [label=<<b>ollama-pull</b> (one-shot)<br/>ollama pull $LLM_MODEL<br/><font point-size="9">exits 0 when the model is in place</font>>, fillcolor="#f1ebf9", color="#6b4fa0", style="rounded,filled,dashed"];
 
             neo4j_data  [label="volume\nneo4j_data", shape=cylinder, fillcolor="#fdeee0", color="#c0661c", fontsize=10];
@@ -52,7 +52,7 @@ digraph architecture {
 
     // Setup and on-demand jobs
     pull     -> ollama   [style=dashed, label="pull request"];
-    ollama   -> registry [style=dashed, dir=back, label="model download\n(~4.7 GB, once)"];
+    ollama   -> registry [style=dashed, dir=back, label="model download\n(~2 GB, once)"];
     make     -> api      [style=dashed, label="make seed:\ndocker compose exec api"];
     neo4j    -> sources  [style=invis];
     api      -> sources  [style=dashed, dir=back, label="HTTPS download (seed scripts)", constraint=false];

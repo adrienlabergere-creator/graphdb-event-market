@@ -17,8 +17,8 @@ Subject 10 of the GraphDB projects (level 3+): geopolitical events and market mo
 
 ## Installation and execution
 
-Requirements: Docker Desktop (or Docker Engine with Compose v2), `make`, about 15 GB of free disk space (the Ollama
-image is 7 GB and the model about 5 GB).
+Requirements: Docker Desktop (or Docker Engine with Compose v2), `make`, about 12 GB of free disk space (the Ollama
+image is 7 GB and the default model about 2 GB).
 
 ```bash
 cp .env.example .env        # then set NEO4J_PASSWORD and API_KEY (any long random string)
@@ -31,17 +31,18 @@ make healthcheck            # /health and /health/db through the reverse proxy
 Swagger is then at http://localhost:8080/docs and the Neo4j Browser at http://localhost:7474. Every port is bound to
 127.0.0.1 only. `make docker-stop` stops the stack and keeps the graph and the model in their Docker volumes.
 
-**The model.** On first start, the one-shot `ollama-pull` service downloads `LLM_MODEL` (default `llama3.1:8b`, about
-4.7 GB) into the `ollama_data` volume. The API does not wait for it: until the model is there, `POST /api/ask` answers
-503 and every other endpoint works. In Docker, Ollama runs on the CPU and `llama3.1:8b` needs about 6 GB of memory:
-give Docker Desktop at least 10 GB (Settings, Resources).
+**The model.** On first start, the one-shot `ollama-pull` service downloads `LLM_MODEL` (default `llama3.2:3b`, about
+2 GB) into the `ollama_data` volume. The API does not wait for it: until the model is there, `POST /api/ask` answers
+503 and every other endpoint works. In Docker, Ollama runs on the CPU: with the default model, 4 GB of Docker memory is
+enough (30 to 75 seconds per answer in our test). **With 16 GB of memory or more, use `llama3.1:8b`**: set
+`LLM_MODEL=llama3.1:8b` in `.env` (about 5 GB, give Docker Desktop at least 10 GB in Settings, Resources). It follows
+the agent's instructions more reliably than the 3b model.
 
-**macOS and 8 GB machines.** Containers on a Mac cannot use the GPU. To run the model with the native
-[Ollama app](https://ollama.com/download) (Metal GPU) instead, run `ollama pull llama3.1:8b`, then
-`cp docker-compose.override.example.yml docker-compose.override.yml` and `make docker-up`: the Ollama containers are
-not started and the API calls the app through `host.docker.internal`. On an 8 GB laptop `llama3.1:8b` still does not
-fit next to Neo4j (one model call took 8 minutes in our test), so set `LLM_MODEL=llama3.2:3b` in your own `.env` and
-pull that model instead (about 30 seconds per answer in our test, less reliable structured output).
+**macOS.** Containers on a Mac cannot use the GPU. To run the model with the native
+[Ollama app](https://ollama.com/download) (Metal GPU) instead, run `ollama pull` with the `LLM_MODEL` of your `.env`,
+then `cp docker-compose.override.example.yml docker-compose.override.yml` and `make docker-up`: the Ollama containers
+are not started and the API calls the app through `host.docker.internal`. On an 8 GB laptop keep the default model:
+`llama3.1:8b` does not fit next to Neo4j (one model call took 8 minutes in our test).
 
 **Without Docker for the API** (development): with Neo4j running and `.env` filled, `make install`, then
 `make schema`, `make ingest` and `make stats` load the graph from the host, and `make run` serves the API with reload
@@ -83,7 +84,7 @@ Neo4j Browser: one `TradingDay` (2026-06-02) where the 6 price series and the 12
 
 ![Neo4j Browser](docs/screenshots/neo4j-browser.png)
 
-An agent answer to "Why did the VIX move in June?": a hypothesis with its confidence, worded as an association, and the tool calls it made. This answer was produced with `llama3.2:3b` on an 8 GB laptop; the default model is `llama3.1:8b`.
+An agent answer to "Why did the VIX move in June?": a hypothesis with its confidence, worded as an association, and the tool calls it made.
 
 ![Agent answer](docs/screenshots/agent-answer.png)
 
