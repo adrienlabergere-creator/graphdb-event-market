@@ -18,5 +18,7 @@ pandas>=2.2
 numpy>=1.26
 matplotlib>=3.8
 
-# To be added by the role owners in their own PRs (not before):
-#   agent:      langgraph, langchain-core, langchain-ollama
+# Agent (stage 3)
+langgraph>=0.2
+langchain-core>=0.3
+langchain-ollama>=0.2
