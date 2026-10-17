@@ -7,7 +7,7 @@ How the stack is built and why. Diagram: [architecture.png](architecture.png) (s
 | Service | Image | What it does | Port | Data |
 |---|---|---|---|---|
 | `proxy` | `nginx:1.27-alpine` | Single entry point: forwards to the API, rate limits, timeouts, body size limit | `127.0.0.1:8080` | none |
-| `api` | built from `Dockerfile`, published as `ghcr.io/victorhenz241-eng/graphdb-event-market-api` | FastAPI endpoints and the LangGraph agent, with the API key on `POST /api/ask` | 8000, internal only | none (stateless) |
+| `api` | built from `Dockerfile` as `API_IMAGE`, published on GHCR (link in the README) | FastAPI endpoints and the LangGraph agent, with the API key on `POST /api/ask` | 8000, internal only | none (stateless) |
 | `neo4j` | `neo4j:5.26` with the GDS plugin | The graph, PageRank and the other GDS algorithms | `127.0.0.1:7474` (Browser), `127.0.0.1:7687` (Bolt) | volume `neo4j_data` |
 | `ollama` | `ollama/ollama:0.40.5` | Serves the local model (`llama3.2:3b` by default, `llama3.1:8b` with 16 GB or more) | 11434, internal only | volume `ollama_data` |
 | `ollama-pull` | `ollama/ollama:0.40.5` | One-shot job: asks `ollama` to download the model, then exits | none | none |
@@ -30,7 +30,8 @@ Images are pinned to a version (never `latest`), so the stack a grader starts is
    prices over HTTPS and write them to Neo4j with `MERGE`, so running it twice changes nothing. Downloads are cached in
    `/srv/data`, owned by the non-root user.
 3. **The model:** `ollama-pull` asks `ollama` to download it from the Ollama registry into `ollama_data`, once.
-4. **The image:** `make docker-push` builds it and pushes it to GHCR; `docker compose` uses it as `API_IMAGE`.
+4. **The image:** `make docker-up` builds it locally as `API_IMAGE` (`event-market-graph-api:dev`);
+   `make docker-push` builds it for amd64 and arm64 and publishes it on GHCR.
 
 ## 4. Why a reverse proxy
 

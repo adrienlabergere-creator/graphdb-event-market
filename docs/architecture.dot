@@ -20,7 +20,7 @@ digraph architecture {
             style="rounded,filled"; fillcolor="#f7f9fb"; color="#5f6b7a"; fontsize=11;
 
             proxy [label=<<b>proxy</b>: Nginx 1.27<br/>127.0.0.1:8080 → :80<br/><font point-size="9">rate limit 20 r/s, /api/ask 10 r/min (429)<br/>timeouts 120 s, /api/ask 300 s<br/>body ≤ 16 KB</font>>, fillcolor="#e3f0fb", color="#2f6ea8"];
-            api   [label=<<b>api</b>: FastAPI + LangGraph agent<br/>:8000 (internal only), non-root<br/><font point-size="9">X-API-Key required on POST /api/ask<br/>guardrails: read-only Cypher, schema check, LIMIT<br/>image ghcr.io/victorhenz241-eng/graphdb-event-market-api</font>>, fillcolor="#e6f4ea", color="#2e7d4f"];
+            api   [label=<<b>api</b>: FastAPI + LangGraph agent<br/>:8000 (internal only), non-root<br/><font point-size="9">X-API-Key required on POST /api/ask<br/>guardrails: read-only Cypher, schema check, LIMIT<br/>image built locally (API_IMAGE), published on GHCR</font>>, fillcolor="#e6f4ea", color="#2e7d4f"];
             neo4j [label=<<b>neo4j</b>: Neo4j 5.26 + GDS<br/>Bolt 7687, HTTP 7474 (127.0.0.1)<br/><font point-size="9">heap 1 GB, page cache 512 MB</font>>, fillcolor="#fdeee0", color="#c0661c"];
             ollama [label=<<b>ollama</b>: Ollama 0.40.5<br/>:11434 (internal only)<br/><font point-size="9">model llama3.2:3b (default), CPU</font>>, fillcolor="#f1ebf9", color="#6b4fa0"];
             pull  [label=<<b>ollama-pull</b> (one-shot)<br/>ollama pull $LLM_MODEL<br/><font point-size="9">exits 0 when the model is in place</font>>, fillcolor="#f1ebf9", color="#6b4fa0", style="rounded,filled,dashed"];
@@ -34,7 +34,7 @@ digraph architecture {
         label=<<b>Internet</b>>; labeljust=l; style="rounded,dashed"; color="#8a96a3"; fontsize=11;
         sources  [label=<<b>Open data</b><br/>GDELT events, FRED prices>, fillcolor="#eef2f6"];
         registry [label=<<b>Ollama model registry</b><br/>registry.ollama.ai>, fillcolor="#eef2f6"];
-        ghcr     [label=<<b>GitHub Container Registry</b><br/>public, linux/amd64 + linux/arm64<br/><font point-size="9">pulled by Docker Compose as API_IMAGE</font>>, fillcolor="#eef2f6"];
+        ghcr     [label=<<b>GitHub Container Registry</b><br/>public image of the api service<br/><font point-size="9">linux/amd64 + linux/arm64</font>>, fillcolor="#eef2f6"];
     }
 
     // Run-time requests

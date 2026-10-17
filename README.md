@@ -17,8 +17,9 @@ Subject 10 of the GraphDB projects (level 3+): geopolitical events and market mo
 
 ## Installation and execution
 
-Requirements: Docker Desktop (or Docker Engine with Compose v2), `make`, about 12 GB of free disk space (the Ollama
-image is 7 GB and the default model about 2 GB).
+Requirements: Docker Desktop or Docker Engine with **Docker Compose v2.24.4 or later** (check with
+`docker compose version`; the `!override` tag of `docker-compose.override.example.yml` needs it), `make`, about 12 GB
+of free disk space (the Ollama image is 7 GB and the default model about 2 GB).
 
 ```bash
 cp .env.example .env        # then set NEO4J_PASSWORD and API_KEY (any long random string)
@@ -152,7 +153,8 @@ The API image is public on the GitHub Container Registry, for `linux/amd64` and 
 docker pull ghcr.io/victorhenz241-eng/graphdb-event-market-api:0.1.0
 ```
 
-Docker Compose uses it as `API_IMAGE` and rebuilds it locally with `make docker-up`. It contains only the application
+`make docker-up` builds the same image locally from the `Dockerfile`, under the name set by `API_IMAGE` in `.env`
+(`event-market-graph-api:dev`), so local builds never overwrite the published tags. It contains only the application
 code, the scripts and the graph contract: no `.env`, no data, no key (see `.dockerignore`).
 
 ## Team contributions
