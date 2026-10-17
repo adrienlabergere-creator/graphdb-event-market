@@ -5,7 +5,7 @@ VENV ?= .venv
 ACT = . $(VENV)/bin/activate
 # Published API image (GitHub Container Registry). Override: make docker-push VERSION=0.2.0
 IMAGE ?= ghcr.io/victorhenz241-eng/graphdb-event-market-api
-VERSION ?= 0.1.0
+VERSION ?= 0.1.1
 PLATFORMS ?= linux/amd64,linux/arm64
 
 help:

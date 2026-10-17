@@ -147,10 +147,10 @@ The agent only calls four tools (`graph_query`, `correlation`, `timeline`, `expl
 
 The API image is public on the GitHub Container Registry, for `linux/amd64` and `linux/arm64`:
 [ghcr.io/victorhenz241-eng/graphdb-event-market-api](https://github.com/users/victorhenz241-eng/packages/container/package/graphdb-event-market-api)
-(tags `0.1.0` and `latest`).
+(tags `0.1.1` and `latest`).
 
 ```bash
-docker pull ghcr.io/victorhenz241-eng/graphdb-event-market-api:0.1.0
+docker pull ghcr.io/victorhenz241-eng/graphdb-event-market-api:0.1.1
 ```
 
 `make docker-up` builds the same image locally from the `Dockerfile`, under the name set by `API_IMAGE` in `.env`
