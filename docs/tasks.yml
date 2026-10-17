@@ -93,8 +93,8 @@ tasks:
     title: "Infrastructure: Docker stack, proxy, Makefile, registry, architecture"
     criteria: [DK1, DK2, DK3, DK4, DK5, SC2, SE5, MK1, MK2, MK3]
     depends_on: [S3]
-    status: in_progress
-    pr: ""
+    status: in_review
+    pr: "#5"
     checklist:
       - "docker compose up from a clean clone: Neo4j with GDS, local LLM runtime, API, reverse proxy, health checks"
       - "Dockerfile, .env handling, no secret in Git"
