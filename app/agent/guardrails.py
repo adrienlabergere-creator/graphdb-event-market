@@ -19,6 +19,18 @@ FORBIDDEN = (
     "DENY", "REVOKE",
 )  # fmt: skip
 CLAUSE_START = ("MATCH", "OPTIONAL", "WITH", "UNWIND", "RETURN")
+RELATION_ENDPOINTS = {
+    "OCCURRED_IN": {("Event", "Country")},
+    "HAS_THEME": {("Event", "Theme")},
+    "MENTIONS": {("Event", "Commodity"), ("Event", "Currency")},
+    "ON_DAY": {("Event", "TradingDay")},
+    "PRICE_ON": {("PriceSeries", "TradingDay")},
+    "TRACKS": {("PriceSeries", "Commodity"), ("PriceSeries", "Currency")},
+    "PRECEDES": {("Event", "Event")},
+    "CORRELATES_WITH": {("Theme", "PriceSeries")},
+    "ABOUT_EVENT": {("Claim", "Event")},
+    "ABOUT_SERIES": {("Claim", "PriceSeries")},
+}
 
 CAUSAL_REWRITES = {
     r"\bwas caused by\b": "was associated with",
@@ -69,9 +81,16 @@ def load_schema(path: Path = CONTRACT) -> dict[str, set[str]]:
 
 
 def strip_comments(query: str) -> str:
-    """Remove Cypher comments (`// ...` and `/* ... */`)."""
-    query = re.sub(r"//[^\n]*", " ", query)
-    return re.sub(r"/\*.*?\*/", " ", query, flags=re.S)
+    """Remove Cypher comments while preserving quoted strings and identifiers."""
+    tokens = r"'(?:\\.|[^'\\])*'|\"(?:\\.|[^\"\\])*\"|`(?:``|[^`])*`|//[^\n]*|/\*.*?\*/"
+
+    def replace(match: re.Match[str]) -> str:
+        token = match.group(0)
+        if token.startswith(("//", "/*")):
+            return " " + "\n" * token.count("\n")
+        return token
+
+    return re.sub(tokens, replace, query, flags=re.S)
 
 
 def _blank_strings(query: str) -> str:
@@ -107,6 +126,30 @@ def check_schema(query: str, schema: dict[str, set[str]] | None = None) -> None:
     for prop in re.findall(r"\b[A-Za-z_]\w*\.(\w+)\b(?!\s*\()", clean) + re.findall(r"\{\s*(\w+)\s*:", clean):
         if prop not in schema["properties"]:
             raise GuardrailError(f"Unknown property: {prop}")
+    check_relationship_endpoints(clean)
+
+
+def check_relationship_endpoints(clean: str) -> None:
+    """Reject a typed one-hop pattern when its labels or direction contradict the contract."""
+    # When both endpoint labels are explicit, the contract also defines which direction is valid.
+    pattern = r"\(([^)]*)\)\s*(<-|-)\s*\[([^]]*)\]\s*(->|-)\s*\(([^)]*)\)"
+    for match in re.finditer(f"(?={pattern})", clean):
+        left, left_arrow, rel_body, right_arrow, right = match.groups()
+        left_label = re.search(r":\s*(\w+)", left.split("{", 1)[0])
+        right_label = re.search(r":\s*(\w+)", right.split("{", 1)[0])
+        rel_type = re.search(r":\s*(\w+)", rel_body)
+        if not (left_label and right_label and rel_type) or "*" in rel_body:
+            continue
+        allowed = RELATION_ENDPOINTS.get(rel_type.group(1))
+        if allowed is None:
+            continue
+        pair = (left_label.group(1), right_label.group(1))
+        if left_arrow == "<-" and right_arrow == "-":
+            pair = pair[::-1]
+        elif (left_arrow, right_arrow) != ("-", "->") and pair[::-1] in allowed:
+            continue
+        if pair not in allowed:
+            raise GuardrailError(f"Invalid endpoints or direction for {rel_type.group(1)}: {pair}")
 
 
 def check_depth(query: str) -> None:

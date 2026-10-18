@@ -66,6 +66,32 @@ def test_schema_check_rejects_unknown_names(query, message):
         g.validate_cypher(query)
 
 
+@pytest.mark.parametrize(
+    "query",
+    [
+        "MATCH (c:Country)-[:OCCURRED_IN]->(e:Event) RETURN e.event_id",
+        "MATCH (e:Event)-[:TRACKS]->(s:PriceSeries) RETURN e.event_id",
+        "MATCH (e:Event)-[:ON_DAY]->(d:TradingDay)-[:PRICE_ON]->(s:PriceSeries) RETURN e.event_id",
+    ],
+)
+def test_schema_check_rejects_impossible_relationships(query):
+    """Known relation names still need the endpoints and direction declared by the contract."""
+    with pytest.raises(g.GuardrailError, match="Invalid endpoints or direction"):
+        g.validate_cypher(query)
+
+
+def test_schema_check_accepts_reverse_notation_for_a_valid_relationship():
+    """A left-pointing arrow is valid when it means Event to Country."""
+    query = "MATCH (c:Country)<-[:OCCURRED_IN]-(e:Event) RETURN e.event_id"
+    assert g.validate_cypher(query).endswith("LIMIT 100")
+
+
+def test_schema_check_does_not_treat_a_map_key_as_a_node_label():
+    """An unlabeled node may carry a property map without supplying an endpoint label."""
+    query = "MATCH (c {iso3: 'IRN'})<-[:OCCURRED_IN]-(e:Event) RETURN e.event_id"
+    assert g.validate_cypher(query).endswith("LIMIT 100")
+
+
 def test_decimal_numbers_are_not_mistaken_for_properties():
     """0.5 is a number, not the property `5` of a variable."""
     assert "LIMIT" in g.validate_cypher("MATCH (e:Event) WHERE e.goldstein < -0.5 RETURN e.title")
@@ -125,6 +151,18 @@ def test_a_trailing_comment_cannot_swallow_the_injected_limit():
     assert capped.endswith(f"LIMIT {g.MAX_LIMIT}") and "//" not in capped
     added = g.enforce_limit("MATCH (e:Event) RETURN e.event_id // no limit here")
     assert added.endswith(f"LIMIT {g.DEFAULT_LIMIT}") and "//" not in added
+
+
+@pytest.mark.parametrize(
+    "literal", ["'http://example.org/event'", "'text /* unchanged */ here'", '"http://example.org"']
+)
+def test_comment_markers_inside_literals_are_preserved(literal):
+    """A URL or comment marker in a Cypher string remains intact while real comments are removed."""
+    query = f"MATCH (e:Event) WHERE e.source_url = {literal} RETURN e.event_id // trailing comment"
+    checked = g.validate_cypher(query)
+    assert literal in checked
+    assert checked.endswith(f"LIMIT {g.DEFAULT_LIMIT}")
+    assert "trailing comment" not in checked
 
 
 def test_function_calls_are_not_read_as_unknown_properties():
