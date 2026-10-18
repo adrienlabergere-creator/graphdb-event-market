@@ -93,7 +93,7 @@ tasks:
     title: "Infrastructure: Docker stack, proxy, Makefile, registry, architecture"
     criteria: [DK1, DK2, DK3, DK4, DK5, SC2, SE5, MK1, MK2, MK3]
     depends_on: [S3]
-    status: in_review
+    status: done
     pr: "#5"
     checklist:
       - "docker compose up from a clean clone: Neo4j with GDS, local LLM runtime, API, reverse proxy, health checks"
@@ -111,7 +111,7 @@ tasks:
     title: "Quality and CI: tests, coverage, lint, review log, scorecard"
     criteria: [CC1, CC2, CC3, TS1, TS2, TS3, TS4, TS5, SE1, SE2, SE3, SE4]
     depends_on: [S4]
-    status: todo
+    status: in_progress
     pr: ""
     checklist:
       - "Fill gaps in unit, API, Neo4j and Cypher tests; container health tests; coverage 60 percent or more"
