@@ -4,6 +4,7 @@ import pytest
 from fakes import MOVE_ROWS, FakeLLM, FakeSession, series_rows
 from neo4j.exceptions import ServiceUnavailable
 
+from app.config import Settings, get_settings
 from app.dependencies import get_session
 from app.main import app
 from app.routers.ask import llm_dependency
@@ -21,10 +22,19 @@ ROWS = {
 }
 
 
+API_KEY = {"X-API-Key": "test-key"}
+
+
+def keyed_settings() -> Settings:
+    """Settings with a known API key, independent of the local .env."""
+    return Settings(_env_file=None, api_key="test-key")
+
+
 @pytest.fixture(name="api")
 def api_fixture(client):
-    """The test client with a fake Neo4j session and a scripted model."""
+    """The test client with a fake Neo4j session, a scripted model and a known API key."""
     app.dependency_overrides[get_session] = lambda: FakeSession(ROWS)
+    app.dependency_overrides[get_settings] = keyed_settings
     app.dependency_overrides[llm_dependency] = lambda: FakeLLM()
     yield client
     app.dependency_overrides.clear()
@@ -112,7 +122,7 @@ def test_neo4j_down_is_a_503(api):
 
 def test_ask_returns_a_structured_answer(api):
     """POST /api/ask returns the AgentAnswer fields."""
-    body = api.post("/api/ask", json={"question": "Why did Brent move?"}).json()
+    body = api.post("/api/ask", json={"question": "Why did Brent move?"}, headers=API_KEY).json()
     assert {
         "answer",
         "status",
@@ -127,13 +137,14 @@ def test_ask_returns_a_structured_answer(api):
 
 def test_ask_validates_the_question(api):
     """An empty or too short question is a 422."""
-    assert api.post("/api/ask", json={"question": ""}).status_code == 422
+    assert api.post("/api/ask", json={"question": ""}, headers=API_KEY).status_code == 422
 
 
 def test_ask_without_a_configured_model_is_a_503(client, monkeypatch):
     """When LLM_MODEL is not set the endpoint answers 503, not a crash."""
     monkeypatch.setattr("app.agent.llm.get_settings", lambda: type("S", (), {"llm_model": "", "ollama_base_url": ""})())
     app.dependency_overrides[get_session] = lambda: FakeSession()
-    response = client.post("/api/ask", json={"question": "Why did Brent move?"})
+    app.dependency_overrides[get_settings] = keyed_settings
+    response = client.post("/api/ask", json={"question": "Why did Brent move?"}, headers=API_KEY)
     app.dependency_overrides.clear()
     assert response.status_code == 503 and "LLM_MODEL" in response.json()["detail"]

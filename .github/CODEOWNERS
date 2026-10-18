@@ -3,10 +3,10 @@
 
 
 # Role A (Graph and data)            : @adrienlabergere-creator
-# Role B (Analytics, GDS, ML)        : @victorhenz241-eng
+# Role B (Analytics, GDS, ML)        : @racso-vs
 # Role C (Agent and API)             : @guschingedgar
-# Role D (Infrastructure)            : @Coachbet
-# Role E (Quality and CI)            : @racso-vs
+# Role D (Infrastructure)            : @victorhenz241-eng
+# Role E (Quality and CI)            : @Coachbet
 
 /scripts/schema.cypher             @adrienlabergere-creator
 /scripts/ingest*.py                @adrienlabergere-creator
@@ -16,9 +16,9 @@
 /docs/DATASETS.md                  @adrienlabergere-creator
 /demo.ipynb                        @adrienlabergere-creator
 
-/app/services/analytics/           @victorhenz241-eng
-/scripts/benchmarks/               @victorhenz241-eng
-/docs/benchmarks.md                @victorhenz241-eng
+/app/services/analytics/           @racso-vs
+/scripts/benchmarks/               @racso-vs
+/docs/benchmarks.md                @racso-vs
 
 /app/agent/                        @guschingedgar
 /app/routers/                      @guschingedgar
@@ -26,14 +26,14 @@
 /docs/llm_guardrails.md            @guschingedgar
 /README.md                         @guschingedgar
 
-/docker-compose.yml                @Coachbet
-/Dockerfile                        @Coachbet
-/nginx/                            @Coachbet
-/Makefile                          @Coachbet
-/app/security.py                   @Coachbet
-/docs/architecture.*               @Coachbet
+/docker-compose.yml                @victorhenz241-eng
+/Dockerfile                        @victorhenz241-eng
+/nginx/                            @victorhenz241-eng
+/Makefile                          @victorhenz241-eng
+/app/security.py                   @victorhenz241-eng
+/docs/architecture.*               @victorhenz241-eng
 
-/tests/                            @racso-vs
-/.github/                          @racso-vs
-/.pylintrc                         @racso-vs
-/scripts/scorecard.py              @racso-vs
+/tests/                            @Coachbet
+/.github/                          @Coachbet
+/.pylintrc                         @Coachbet
+/scripts/scorecard.py              @Coachbet

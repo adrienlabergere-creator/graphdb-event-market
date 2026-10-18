@@ -8,11 +8,11 @@
 # No dates here: a stage is ready when the previous one is done.
 
 team:
-  Adrien: {role: A, reviewer: Victor}   # reviewer = who reviews this person's PRs (the next person in the relay)
-  Victor: {role: B, reviewer: Edgar}
-  Edgar:  {role: C, reviewer: Louis}
-  Louis:  {role: D, reviewer: Oscar}
-  Oscar:  {role: E, reviewer: Adrien}
+  Adrien: {role: A, reviewer: Oscar}   # reviewer = who reviews this person's PRs (the next person in the relay)
+  Oscar:  {role: B, reviewer: Edgar}
+  Edgar:  {role: C, reviewer: Victor}
+  Victor: {role: D, reviewer: Louis}
+  Louis:  {role: E, reviewer: Adrien}
 
 phases:
   0: {name: Foundations, gate: "Repo created, kit on main, protection set", min_score: 0}
@@ -40,7 +40,7 @@ tasks:
     title: "Graph and data: data go/no-go, schema, ingestion, diagrams, notebook"
     criteria: [NJ1, NJ2, NJ3, NJ4, NJ5, AC3, SC1, SC3, DC2]
     depends_on: [L0]
-    status: in_review
+    status: done
     pr: "#2"
     checklist:
       - "Go/no-go: download event and market samples and load them into Neo4j"
@@ -50,7 +50,7 @@ tasks:
       - "Tests for your own code (schema file, ingestion helpers)"
       - "docs/graph_schema.png and docs/modeling_rationale.md with the anti-genericity appendix"
       - "demo.ipynb: graph exploration with visualizations (no agent needed)"
-    handoff: "Graph loaded in Neo4j, contract frozen, ingestion reproducible. Victor reviews this PR and starts from it."
+    handoff: "Graph loaded in Neo4j, contract frozen, ingestion reproducible. Oscar reviews this PR and starts from it."
 
   - id: S2
     phase: 2
@@ -58,7 +58,7 @@ tasks:
     title: "Analytics, GDS, ML: queries, services, algorithms, benchmarks"
     criteria: [AC1, AC2, GD1, GD2, OP1, SE6]
     depends_on: [S1]
-    status: in_review
+    status: done
     pr: "#3"
     checklist:
       - "5 core Cypher queries (parameterised, with LIMIT), including a complex pattern match"
@@ -75,7 +75,7 @@ tasks:
     title: "API and agent: contracts, endpoints, LangGraph agent, guardrails"
     criteria: [FA1, FA2, FA3, FA4, GD3, GD4, DC1]
     depends_on: [S2]
-    status: in_review
+    status: done
     pr: "#4"
     checklist:
       - "docs/API_CONTRACT.md and docs/AGENT_SPEC.md finalized at the start, then followed"
@@ -85,16 +85,16 @@ tasks:
       - "Evaluation set of 10 questions and results, including one rejected unsafe output; docs/llm_guardrails.md"
       - "README: description, install, API examples, guardrails summary (screenshots are added in stage 4)"
       - "Tests for your own code with the LLM mocked"
-    handoff: "API and agent working locally. Louis reviews this PR and containerises the whole stack."
+    handoff: "API and agent working locally. Victor reviews this PR and containerises the whole stack."
 
   - id: S4
     phase: 4
-    owner: Louis
+    owner: Victor
     title: "Infrastructure: Docker stack, proxy, Makefile, registry, architecture"
     criteria: [DK1, DK2, DK3, DK4, DK5, SC2, SE5, MK1, MK2, MK3]
     depends_on: [S3]
-    status: todo
-    pr: ""
+    status: in_review
+    pr: "#5"
     checklist:
       - "docker compose up from a clean clone: Neo4j with GDS, local LLM runtime, API, reverse proxy, health checks"
       - "Dockerfile, .env handling, no secret in Git"
@@ -103,11 +103,11 @@ tasks:
       - "Image published on a public registry, link in the README"
       - "docs/architecture.png: services, ports, data flows"
       - "Screenshots in docs/screenshots and README: Swagger, Neo4j Browser graph, an agent answer with its paths"
-    handoff: "Whole stack runs with make docker-run. Oscar reviews this PR and finishes quality and CI."
+    handoff: "Whole stack runs with make docker-run. Louis reviews this PR and finishes quality and CI."
 
   - id: S5
     phase: 5
-    owner: Oscar
+    owner: Louis
     title: "Quality and CI: tests, coverage, lint, review log, scorecard"
     criteria: [CC1, CC2, CC3, TS1, TS2, TS3, TS4, TS5, SE1, SE2, SE3, SE4]
     depends_on: [S4]

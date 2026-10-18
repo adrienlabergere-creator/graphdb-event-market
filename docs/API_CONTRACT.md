@@ -7,9 +7,9 @@ After this freeze, a change needs a PR approved by the owner and the lead.
 ## Common rules
 
 - Pagination on every list endpoint: `limit` (default 20, maximum 100) and `offset` (default 0).
-- Errors: `{"detail": "..."}` with 400 (invalid input), 401 (missing or wrong API key, from stage 4), 404 (unknown entity), 422 (validation, raised by FastAPI), 503 (Neo4j, the GDS plugin or the LLM runtime unavailable).
+- Errors: `{"detail": "..."}` with 400 (invalid input), 401 (missing or wrong API key), 404 (unknown entity), 422 (validation, raised by FastAPI), 503 (Neo4j, the GDS plugin or the LLM runtime unavailable, or no API key configured on the server).
 - Every analytical result carries `"status": "hypothesis"` and a `"disclaimer"` field. A correlation is never worded as a cause.
-- Sensitive endpoints (`POST`) require the header `X-API-Key`. The key and the Nginx rules are added in stage 4 (role D, criterion SE5); stage 3 ships the endpoints without the check.
+- Sensitive endpoints (`POST`) require the header `X-API-Key`, compared with `API_KEY` from `.env` (`app/security.py`, stage 4, role D, criterion SE5). If `API_KEY` is empty the endpoint fails closed with 503. `GET` endpoints are read-only and public.
 - Cypher is always parameterized, carries a `LIMIT` and runs with a bounded traversal depth and a timeout.
 
 ## Endpoints

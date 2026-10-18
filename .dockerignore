@@ -1,0 +1,9 @@
+# Build context = only what the Dockerfile copies. Everything else (.env, .venv, .git, data/, tests, docs)
+# never reaches the Docker daemon, so a secret or a local file cannot end up in the published image.
+*
+!requirements.txt
+!app/
+!scripts/
+!docs/GRAPH_CONTRACT.md
+**/__pycache__
+**/*.py[cod]

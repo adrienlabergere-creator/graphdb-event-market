@@ -1,7 +1,7 @@
 # Criteria that need a human decision. Set done: true only with evidence (PR link, file, screenshot).
 # Criteria with an automatic check cannot be overridden here, except GT4 when the GitHub CLI is unavailable.
 
-DK5: {done: false, evidence: ""}   # docker compose up works from a fresh clone (screenshot or log)
+DK5: {done: true, evidence: "S4 PR (feat/infra): from a fresh copy with only .env added, make docker-up brings neo4j, ollama, api healthy and proxy up, ollama-pull exits 0, make seed loads 4526 events and 880 prices, make healthcheck passes; steps and results in docs/infrastructure.md section 12"}   # docker compose up works from a fresh clone (screenshot or log)
 AC2: {done: false, evidence: ""}   # complex graph-pattern matching query (link to the query)
 OP1: {done: false, evidence: ""}   # docs/benchmarks.md with before/after latencies
 GD4: {done: false, evidence: ""}   # docs/llm_guardrails.md + evaluation results + rejection demo

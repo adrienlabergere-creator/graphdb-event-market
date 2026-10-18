@@ -1,7 +1,8 @@
 name: event-market-graph
 
-# Four services: Neo4j (+ Graph Data Science), local LLM runtime, FastAPI, Nginx reverse proxy.
-# All published ports are bound to 127.0.0.1 only.
+# Four long-running services: Neo4j (+ Graph Data Science), local LLM runtime (Ollama), FastAPI, Nginx reverse proxy,
+# plus a one-shot job that downloads the model into the Ollama volume.
+# All published ports are bound to 127.0.0.1 only: nothing is reachable from another machine.
 
 services:
   neo4j:
@@ -12,6 +13,8 @@ services:
       NEO4J_PLUGINS: '["graph-data-science"]'
       NEO4J_dbms_security_procedures_unrestricted: "gds.*"
       NEO4J_server_memory_heap_max__size: "1G"
+      # The graph is small (about 5,000 nodes): a fixed page cache keeps Neo4j light on an 8 GB laptop.
+      NEO4J_server_memory_pagecache_size: "512M"
     ports:
       - "127.0.0.1:7474:7474"
       - "127.0.0.1:7687:7687"
@@ -22,12 +25,14 @@ services:
       interval: 10s
       timeout: 5s
       retries: 12
+      # First start downloads the GDS plugin: failed checks in this period do not count.
+      start_period: 60s
 
   ollama:
-    image: ollama/ollama:latest
+    image: ollama/ollama:0.40.5
     restart: unless-stopped
-    ports:
-      - "127.0.0.1:11434:11434"
+    # No published port: only the api and ollama-pull containers talk to it, over the internal network.
+    # This also avoids a clash with the native Ollama app, which listens on 127.0.0.1:11434 on the host.
     volumes:
       - ollama_data:/root/.ollama
     healthcheck:
@@ -36,16 +41,34 @@ services:
       timeout: 10s
       retries: 5
 
+  # One-shot job: asks the ollama server (OLLAMA_HOST) to download the model, stored in its ollama_data volume,
+  # then exits (0 when done). A second run only checks the manifest. The API does not wait for it: until the
+  # model is there, POST /api/ask answers 503 "model not found". Follow it with: docker compose logs -f ollama-pull
+  ollama-pull:
+    image: ollama/ollama:0.40.5
+    restart: "no"
+    environment:
+      OLLAMA_HOST: ollama:11434
+    command: ["pull", "${LLM_MODEL:-llama3.2:3b}"]
+    depends_on:
+      ollama:
+        condition: service_healthy
+
   api:
     build: .
     image: "${API_IMAGE:-event-market-graph-api:dev}"
     restart: unless-stopped
     env_file: .env
+    # API_KEY, NEO4J_USER and NEO4J_PASSWORD come from .env. The values below override .env, which keeps
+    # localhost addresses for scripts run on the host.
     environment:
       NEO4J_URI: bolt://neo4j:7687
       OLLAMA_BASE_URL: http://ollama:11434
+      LLM_MODEL: "${LLM_MODEL:-llama3.2:3b}"
     depends_on:
       neo4j:
+        condition: service_healthy
+      ollama:
         condition: service_healthy
     expose:
       - "8000"
