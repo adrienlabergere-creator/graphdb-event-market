@@ -111,8 +111,8 @@ tasks:
     title: "Quality and CI: tests, coverage, lint, review log, scorecard"
     criteria: [CC1, CC2, CC3, TS1, TS2, TS3, TS4, TS5, SE1, SE2, SE3, SE4]
     depends_on: [S4]
-    status: in_progress
-    pr: ""
+    status: in_review
+    pr: "#7"
     checklist:
       - "Fill gaps in unit, API, Neo4j and Cypher tests; container health tests; coverage 60 percent or more"
       - "pylint 9.5 or more and docstring sweep over the whole repository; black clean"
