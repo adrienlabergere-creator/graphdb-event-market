@@ -80,6 +80,49 @@ def test_schema_check_rejects_impossible_relationships(query):
         g.validate_cypher(query)
 
 
+def test_relationship_endpoints_are_read_from_the_graph_contract():
+    """Directions come from the patterns of docs/GRAPH_CONTRACT.md, so there is no second copy to keep in sync."""
+    endpoints = g.load_relation_endpoints()
+    assert endpoints["OCCURRED_IN"] == {("Event", "Country")}
+    assert endpoints["MENTIONS"] == {("Event", "Commodity"), ("Event", "Currency")}
+    assert endpoints["TRACKS"] == {("PriceSeries", "Commodity"), ("PriceSeries", "Currency")}
+    assert set(endpoints) == g.load_schema()["relationships"]
+
+
+def test_endpoint_check_follows_an_edited_contract(tmp_path):
+    """If the contract changes a direction, the guardrail enforces the new one without a code change."""
+    contract = tmp_path / "GRAPH_CONTRACT.md"
+    contract.write_text(
+        "| Pattern | Properties | Meaning |\n|---|---|---|\n| `(:Country)-[:OCCURRED_IN]->(:Event)` | | |\n"
+    )
+    endpoints = g.load_relation_endpoints(contract)
+    g.check_relationship_endpoints("MATCH (c:Country)-[:OCCURRED_IN]->(e:Event) RETURN e", endpoints)
+    with pytest.raises(g.GuardrailError, match="Invalid endpoints or direction"):
+        g.check_relationship_endpoints("MATCH (e:Event)-[:OCCURRED_IN]->(c:Country) RETURN e", endpoints)
+
+
+@pytest.mark.parametrize(
+    "query",
+    [
+        "MATCH (c:Country {name: 'Congo (DRC)'})-[:OCCURRED_IN]->(e:Event) RETURN e.event_id",
+        "MATCH (e:Event {date: date('2024-06-01')})<-[:OCCURRED_IN]-(c:Country) RETURN e.event_id",
+    ],
+)
+def test_parentheses_in_a_node_map_do_not_hide_a_wrong_direction(query):
+    """A parenthesis in a literal or a function call inside the property map no longer ends the node early."""
+    with pytest.raises(g.GuardrailError, match="Invalid endpoints or direction"):
+        g.validate_cypher(query)
+
+
+def test_parentheses_in_a_node_map_keep_a_valid_direction():
+    """The same maps with the contract direction are accepted."""
+    for query in (
+        "MATCH (c:Country {name: 'Congo (DRC)'})<-[:OCCURRED_IN]-(e:Event) RETURN e.event_id",
+        "MATCH (e:Event {date: date('2024-06-01')})-[:OCCURRED_IN]->(c:Country) RETURN e.event_id",
+    ):
+        assert g.validate_cypher(query).endswith("LIMIT 100")
+
+
 def test_schema_check_accepts_reverse_notation_for_a_valid_relationship():
     """A left-pointing arrow is valid when it means Event to Country."""
     query = "MATCH (c:Country)<-[:OCCURRED_IN]-(e:Event) RETURN e.event_id"

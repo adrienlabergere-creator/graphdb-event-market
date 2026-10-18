@@ -19,18 +19,6 @@ FORBIDDEN = (
     "DENY", "REVOKE",
 )  # fmt: skip
 CLAUSE_START = ("MATCH", "OPTIONAL", "WITH", "UNWIND", "RETURN")
-RELATION_ENDPOINTS = {
-    "OCCURRED_IN": {("Event", "Country")},
-    "HAS_THEME": {("Event", "Theme")},
-    "MENTIONS": {("Event", "Commodity"), ("Event", "Currency")},
-    "ON_DAY": {("Event", "TradingDay")},
-    "PRICE_ON": {("PriceSeries", "TradingDay")},
-    "TRACKS": {("PriceSeries", "Commodity"), ("PriceSeries", "Currency")},
-    "PRECEDES": {("Event", "Event")},
-    "CORRELATES_WITH": {("Theme", "PriceSeries")},
-    "ABOUT_EVENT": {("Claim", "Event")},
-    "ABOUT_SERIES": {("Claim", "PriceSeries")},
-}
 
 CAUSAL_REWRITES = {
     r"\bwas caused by\b": "was associated with",
@@ -78,6 +66,23 @@ def load_schema(path: Path = CONTRACT) -> dict[str, set[str]]:
             rel_types.update(re.findall(r"\[:(\w+)\]", cells[0]))
             props.update(re.findall(r"`(\w+)`", cells[1]))
     return {"labels": labels, "relationships": rel_types, "properties": props}
+
+
+@lru_cache
+def load_relation_endpoints(path: Path = CONTRACT) -> dict[str, set[tuple[str, str]]]:
+    """Directed (source, target) label pairs of each relationship, parsed from the patterns of the contract.
+
+    `(:Event)-[:OCCURRED_IN]->(:Country)` gives `{"OCCURRED_IN": {("Event", "Country")}}`, so the contract file
+    stays the single source of truth for names and directions alike.
+    """
+    endpoints: dict[str, set[tuple[str, str]]] = {}
+    for line in path.read_text(encoding="utf-8").splitlines():
+        cells = [c.strip() for c in line.strip().strip("|").split("|")]
+        if "[:" not in cells[0]:
+            continue
+        for source, rel, target in re.findall(r"\(:(\w+)\)-\[:(\w+)\]->\(:(\w+)\)", cells[0]):
+            endpoints.setdefault(rel, set()).add((source, target))
+    return endpoints
 
 
 def strip_comments(query: str) -> str:
@@ -129,10 +134,18 @@ def check_schema(query: str, schema: dict[str, set[str]] | None = None) -> None:
     check_relationship_endpoints(clean)
 
 
-def check_relationship_endpoints(clean: str) -> None:
-    """Reject a typed one-hop pattern when its labels or direction contradict the contract."""
-    # When both endpoint labels are explicit, the contract also defines which direction is valid.
-    pattern = r"\(([^)]*)\)\s*(<-|-)\s*\[([^]]*)\]\s*(->|-)\s*\(([^)]*)\)"
+def check_relationship_endpoints(clean: str, endpoints: dict[str, set[tuple[str, str]]] | None = None) -> None:
+    """Reject a typed one-hop pattern when its labels or direction contradict the contract.
+
+    `clean` must come from `_blank_strings`, so parentheses inside string literals are already gone. A node may
+    contain one level of parentheses, such as `{date: date('2024-06-01')}`. Coverage is deliberately partial:
+    the check only applies when both node labels and the relationship type are written, and it skips
+    variable-length hops, nodes with nested function calls such as `f(g(x))`, and relationship property maps
+    that contain `]`. Those patterns still go through the allow-list, the schema names, the depth bound and LIMIT.
+    """
+    endpoints = endpoints or load_relation_endpoints()
+    node = r"\(((?:[^()]|\([^()]*\))*)\)"
+    pattern = node + r"\s*(<-|-)\s*\[([^]]*)\]\s*(->|-)\s*" + node
     for match in re.finditer(f"(?={pattern})", clean):
         left, left_arrow, rel_body, right_arrow, right = match.groups()
         left_label = re.search(r":\s*(\w+)", left.split("{", 1)[0])
@@ -140,7 +153,7 @@ def check_relationship_endpoints(clean: str) -> None:
         rel_type = re.search(r":\s*(\w+)", rel_body)
         if not (left_label and right_label and rel_type) or "*" in rel_body:
             continue
-        allowed = RELATION_ENDPOINTS.get(rel_type.group(1))
+        allowed = endpoints.get(rel_type.group(1))
         if allowed is None:
             continue
         pair = (left_label.group(1), right_label.group(1))
