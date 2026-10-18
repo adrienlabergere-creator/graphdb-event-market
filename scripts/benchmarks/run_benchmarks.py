@@ -34,14 +34,16 @@ CREATE_INDEX = "CREATE INDEX event_date IF NOT EXISTS FOR (e:Event) ON (e.date)"
 
 
 def measure(session, query: str) -> dict:
-    """Median time and database hits over REPEATS runs (the first run warms the cache and is ignored)."""
+    """Estimated EXPLAIN plan plus PROFILE metrics over warmed, repeated runs."""
+    estimated_operators = explain.explain(session, query, **PARAMS)
     session.run(query, **PARAMS).consume()
     runs = [explain.profile(session, query, **PARAMS) for _ in range(REPEATS)]
     return {
         "rows": runs[0]["rows"],
         "db_hits": runs[0]["db_hits"],
         "ms": statistics.median(r["ms"] for r in runs),
-        "operators": runs[0]["operators"],
+        "explain_operators": estimated_operators,
+        "profile_operators": runs[0]["operators"],
     }
 
 
@@ -58,9 +60,9 @@ def table(results: dict[str, dict]) -> str:
     return "\n".join(lines)
 
 
-def plans(results: dict[str, dict]) -> str:
-    """Operators of each plan, so the report can point at the index seek or the full scan."""
-    return "\n".join(f"- `{name}`: {' > '.join(item['operators'][:8])}" for name, item in results.items())
+def plans(results: dict[str, dict], key: str) -> str:
+    """Operators of each estimated or executed plan, including index seeks and scans."""
+    return "\n".join(f"- `{name}`: {' > '.join(item[key])}" for name, item in results.items())
 
 
 def render(with_index: dict, without_index: dict | None) -> str:
@@ -75,9 +77,13 @@ def render(with_index: dict, without_index: dict | None) -> str:
         "",
         table(with_index),
         "",
-        "Plans:",
+        "EXPLAIN estimated plans (the query is not executed):",
         "",
-        plans(with_index),
+        plans(with_index, "explain_operators"),
+        "",
+        "PROFILE executed plans (the table above reports their rows and database hits):",
+        "",
+        plans(with_index, "profile_operators"),
     ]
     if without_index is not None:
         parts += [
@@ -86,9 +92,26 @@ def render(with_index: dict, without_index: dict | None) -> str:
             "",
             table(without_index),
             "",
-            "Plans:",
+            "EXPLAIN estimated plans:",
             "",
-            plans(without_index),
+            plans(without_index, "explain_operators"),
+            "",
+            "PROFILE executed plans:",
+            "",
+            plans(without_index, "profile_operators"),
+        ]
+        top_events_saved = without_index["top_events"]["db_hits"] - with_index["top_events"]["db_hits"]
+        top_countries_extra = with_index["top_countries"]["db_hits"] - without_index["top_countries"]["db_hits"]
+        parts += [
+            "",
+            "## Interpretation",
+            "",
+            f"The `Event.date` index saves {top_events_saved:,} database hits for `top_events` in this window. "
+            "The EXPLAIN and PROFILE plans above show an index seek with the index and a label scan without it.",
+            f"For `top_countries`, the indexed plan uses {top_countries_extra:,} more database hits: the measured "
+            "window covers nearly every event, so the index is not selective. The other three queries do not depend "
+            "on `Event.date`; their nearly identical counts are a control. These small, warmed-run timings describe "
+            "this dataset and machine, not a general speedup.",
         ]
     return "\n".join(parts) + "\n"
 

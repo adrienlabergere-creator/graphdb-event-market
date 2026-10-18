@@ -1,0 +1,761 @@
+{
+  "run_at_utc": "2026-10-18T14:07:18.338337+00:00",
+  "model": "llama3.1:8b",
+  "data_window": "2026-02-01 to 2026-07-31",
+  "cases": [
+    {
+      "name": "iran_events",
+      "question": "How many events happened in Iran in June 2026?",
+      "expected_tool": "graph_query",
+      "expected_status": "verified",
+      "needs_path": false,
+      "answer": {
+        "answer": "97",
+        "status": "verified",
+        "confidence": 1.0,
+        "tool_calls": [
+          {
+            "name": "graph_query",
+            "arguments": {
+              "cypher": "MATCH (e:Event)-[:OCCURRED_IN]->(c:Country {iso3: 'IRN'}) WHERE e.date >= date('2026-06-01') AND e.date < date('2026-07-01') RETURN count(e) AS event_count"
+            },
+            "duration_ms": 45
+          },
+          {
+            "name": "graph_query",
+            "arguments": {
+              "cypher": "MATCH (e:Event)-[:OCCURRED_IN]->(c:Country {iso3: 'IRN'}) WHERE e.date >= date('2026-06-01') AND e.date < date('2026-07-01') RETURN count(e) AS event_count"
+            },
+            "duration_ms": 5
+          }
+        ],
+        "graph_paths": [],
+        "cypher_used": [
+          "MATCH (e:Event)-[:OCCURRED_IN]->(c:Country {iso3: 'IRN'}) WHERE e.date >= date('2026-06-01') AND e.date < date('2026-07-01') RETURN count(e) AS event_count LIMIT 100",
+          "MATCH (e:Event)-[:OCCURRED_IN]->(c:Country {iso3: 'IRN'}) WHERE e.date >= date('2026-06-01') AND e.date < date('2026-07-01') RETURN count(e) AS event_count LIMIT 100"
+        ],
+        "warnings": [],
+        "disclaimer": "Statistical association measured on a short sample. It is a hypothesis, not a proven cause, and not financial advice."
+      },
+      "expected_tool_used": true,
+      "expected_status_met": true,
+      "path_present": false,
+      "no_causal_wording": true,
+      "plans": [
+        {
+          "tool": "graph_query",
+          "arguments": {
+            "cypher": "MATCH (e:Event)-[:OCCURRED_IN]->(c:Country {iso3: 'IRN'}) WHERE e.date >= date('2026-06-01') AND e.date < date('2026-07-01') RETURN count(e) AS event_count"
+          }
+        },
+        {
+          "tool": "graph_query",
+          "arguments": {
+            "cypher": "MATCH (e:Event)-[:OCCURRED_IN]->(c:Country {iso3: 'IRN'}) WHERE e.date >= date('2026-06-01') AND e.date < date('2026-07-01') RETURN count(e) AS event_count"
+          }
+        }
+      ],
+      "generated_queries": [
+        {
+          "query": "MATCH (e:Event)-[:OCCURRED_IN]->(c:Country {iso3: 'IRN'}) WHERE e.date >= date('2026-06-01') AND e.date < date('2026-07-01') RETURN count(e) AS event_count",
+          "valid": true,
+          "executed_form": "MATCH (e:Event)-[:OCCURRED_IN]->(c:Country {iso3: 'IRN'}) WHERE e.date >= date('2026-06-01') AND e.date < date('2026-07-01') RETURN count(e) AS event_count LIMIT 100"
+        },
+        {
+          "query": "MATCH (e:Event)-[:OCCURRED_IN]->(c:Country {iso3: 'IRN'}) WHERE e.date >= date('2026-06-01') AND e.date < date('2026-07-01') RETURN count(e) AS event_count",
+          "valid": true,
+          "executed_form": "MATCH (e:Event)-[:OCCURRED_IN]->(c:Country {iso3: 'IRN'}) WHERE e.date >= date('2026-06-01') AND e.date < date('2026-07-01') RETURN count(e) AS event_count LIMIT 100"
+        }
+      ],
+      "duration_s": 41.2
+    },
+    {
+      "name": "top_countries",
+      "question": "Which countries had the most events in May 2026?",
+      "expected_tool": "graph_query",
+      "expected_status": "verified",
+      "needs_path": false,
+      "answer": {
+        "answer": "The countries with the most events in May 2026 were the USA, IRN, AUS, GBR, and ISR, with the USA having the most events. The confidence in this answer is 1.0. The USA had 289 events in May 2026. IRN had 111 events in May 2026.",
+        "status": "verified",
+        "confidence": 1.0,
+        "tool_calls": [
+          {
+            "name": "graph_query",
+            "arguments": {
+              "cypher": "MATCH (e:Event)-[:OCCURRED_IN]->(c:Country) WHERE e.date >= date('2026-05-01') AND e.date < date('2026-06-01') RETURN c.iso3, count(e) AS event_count ORDER BY event_count DESC LIMIT 10"
+            },
+            "duration_ms": 20
+          },
+          {
+            "name": "graph_query",
+            "arguments": {
+              "cypher": "MATCH (e:Event)-[:OCCURRED_IN]->(c:Country) WHERE e.date >= date('2026-05-01') AND e.date < date('2026-06-01') RETURN c.iso3, count(e) AS event_count ORDER BY event_count DESC LIMIT 10"
+            },
+            "duration_ms": 40
+          }
+        ],
+        "graph_paths": [],
+        "cypher_used": [
+          "MATCH (e:Event)-[:OCCURRED_IN]->(c:Country) WHERE e.date >= date('2026-05-01') AND e.date < date('2026-06-01') RETURN c.iso3, count(e) AS event_count ORDER BY event_count DESC LIMIT 10",
+          "MATCH (e:Event)-[:OCCURRED_IN]->(c:Country) WHERE e.date >= date('2026-05-01') AND e.date < date('2026-06-01') RETURN c.iso3, count(e) AS event_count ORDER BY event_count DESC LIMIT 10"
+        ],
+        "warnings": [],
+        "disclaimer": "Statistical association measured on a short sample. It is a hypothesis, not a proven cause, and not financial advice."
+      },
+      "expected_tool_used": true,
+      "expected_status_met": true,
+      "path_present": false,
+      "no_causal_wording": true,
+      "plans": [
+        {
+          "tool": "graph_query",
+          "arguments": {
+            "cypher": "MATCH (e:Event)-[:OCCURRED_IN]->(c:Country) WHERE e.date >= date('2026-05-01') AND e.date < date('2026-06-01') RETURN c.iso3, count(e) AS event_count ORDER BY event_count DESC LIMIT 10"
+          }
+        },
+        {
+          "tool": "graph_query",
+          "arguments": {
+            "cypher": "MATCH (e:Event)-[:OCCURRED_IN]->(c:Country) WHERE e.date >= date('2026-05-01') AND e.date < date('2026-06-01') RETURN c.iso3, count(e) AS event_count ORDER BY event_count DESC LIMIT 10"
+          }
+        }
+      ],
+      "generated_queries": [
+        {
+          "query": "MATCH (e:Event)-[:OCCURRED_IN]->(c:Country) WHERE e.date >= date('2026-05-01') AND e.date < date('2026-06-01') RETURN c.iso3, count(e) AS event_count ORDER BY event_count DESC LIMIT 10",
+          "valid": true,
+          "executed_form": "MATCH (e:Event)-[:OCCURRED_IN]->(c:Country) WHERE e.date >= date('2026-05-01') AND e.date < date('2026-06-01') RETURN c.iso3, count(e) AS event_count ORDER BY event_count DESC LIMIT 10"
+        },
+        {
+          "query": "MATCH (e:Event)-[:OCCURRED_IN]->(c:Country) WHERE e.date >= date('2026-05-01') AND e.date < date('2026-06-01') RETURN c.iso3, count(e) AS event_count ORDER BY event_count DESC LIMIT 10",
+          "valid": true,
+          "executed_form": "MATCH (e:Event)-[:OCCURRED_IN]->(c:Country) WHERE e.date >= date('2026-05-01') AND e.date < date('2026-06-01') RETURN c.iso3, count(e) AS event_count ORDER BY event_count DESC LIMIT 10"
+        }
+      ],
+      "duration_s": 88.9
+    },
+    {
+      "name": "brent_move",
+      "question": "Which events preceded the largest Brent move in the latest 90 days?",
+      "expected_tool": "explain_move",
+      "expected_status": "hypothesis",
+      "needs_path": true,
+      "answer": {
+        "answer": "The events that preceded the largest Brent move in the latest 90 days are IRAQ / THE US: fight (Tehran, Tehran, Iran) and UNITED STATES: threaten (Louisiana, United States), with a confidence of 0.73 and 0.73 respectively.",
+        "status": "hypothesis",
+        "confidence": 0.73,
+        "tool_calls": [
+          {
+            "name": "explain_move",
+            "arguments": {
+              "series_id": "BRENT",
+              "window": 90
+            },
+            "duration_ms": 555
+          },
+          {
+            "name": "explain_move",
+            "arguments": {
+              "series_id": "BRENT",
+              "window": 90
+            },
+            "duration_ms": 37
+          }
+        ],
+        "graph_paths": [
+          [
+            "GDELT-1314344426",
+            "2026-07-20",
+            "BRENT"
+          ],
+          [
+            "GDELT-1314682715",
+            "2026-07-22",
+            "BRENT"
+          ],
+          [
+            "GDELT-1314497573",
+            "2026-07-21",
+            "BRENT"
+          ],
+          [
+            "GDELT-1314363394",
+            "2026-07-20",
+            "BRENT"
+          ],
+          [
+            "GDELT-1314670919",
+            "2026-07-22",
+            "BRENT"
+          ]
+        ],
+        "cypher_used": [],
+        "warnings": [],
+        "disclaimer": "Statistical association measured on a short sample. It is a hypothesis, not a proven cause, and not financial advice."
+      },
+      "expected_tool_used": true,
+      "expected_status_met": true,
+      "path_present": true,
+      "no_causal_wording": true,
+      "plans": [
+        {
+          "tool": "explain_move",
+          "arguments": {
+            "series_id": "BRENT",
+            "window": 90
+          }
+        },
+        {
+          "tool": "explain_move",
+          "arguments": {
+            "series_id": "BRENT",
+            "window": 90
+          }
+        }
+      ],
+      "generated_queries": [],
+      "duration_s": 92.6
+    },
+    {
+      "name": "vix_move",
+      "question": "Which events preceded the largest VIX move in the latest 90 days?",
+      "expected_tool": "explain_move",
+      "expected_status": "hypothesis",
+      "needs_path": true,
+      "answer": {
+        "answer": "The events that preceded the largest VIX move in the latest 90 days are: CHINOOK / NATIONAL GUARD: exhibit force posture (Gilmore Lake, California, United States) with a confidence of 1.0, SOUTH CAROLINA: fight (South Carolina, United States) with a confidence of 0.854, RUSSIAN / CIVILIAN: fight (Sumy, Sums'ka Oblast', Ukraine) with a confidence of 0.622, UNITED STATES: assault (Franconia, Pennsylvania, United States) with a confidence of 0.62, and UNITED STATES: fight (Montgomery County, Pennsylvania, United States) with a confidence of 0.62.",
+        "status": "hypothesis",
+        "confidence": 0.95,
+        "tool_calls": [
+          {
+            "name": "explain_move",
+            "arguments": {
+              "series_id": "VIX",
+              "window": 90
+            },
+            "duration_ms": 113
+          },
+          {
+            "name": "explain_move",
+            "arguments": {
+              "series_id": "VIX",
+              "window": 90
+            },
+            "duration_ms": 38
+          }
+        ],
+        "graph_paths": [
+          [
+            "GDELT-1307135131",
+            "2026-06-02",
+            "VIX"
+          ],
+          [
+            "GDELT-1306987222",
+            "2026-06-02",
+            "VIX"
+          ],
+          [
+            "GDELT-1307219353",
+            "2026-06-03",
+            "VIX"
+          ],
+          [
+            "GDELT-1307309053",
+            "2026-06-03",
+            "VIX"
+          ],
+          [
+            "GDELT-1307307948",
+            "2026-06-03",
+            "VIX"
+          ]
+        ],
+        "cypher_used": [],
+        "warnings": [],
+        "disclaimer": "Statistical association measured on a short sample. It is a hypothesis, not a proven cause, and not financial advice."
+      },
+      "expected_tool_used": true,
+      "expected_status_met": true,
+      "path_present": true,
+      "no_causal_wording": true,
+      "plans": [
+        {
+          "tool": "explain_move",
+          "arguments": {
+            "series_id": "VIX",
+            "window": 90
+          }
+        },
+        {
+          "tool": "explain_move",
+          "arguments": {
+            "series_id": "VIX",
+            "window": 90
+          }
+        }
+      ],
+      "generated_queries": [],
+      "duration_s": 103.5
+    },
+    {
+      "name": "vix_june",
+      "question": "Show the VIX daily moves and event counts in June 2026.",
+      "expected_tool": "timeline",
+      "expected_status": "hypothesis",
+      "needs_path": false,
+      "answer": {
+        "answer": "The VIX daily moves and event counts in June 2026 are as follows: The VIX closed at 16.05 on June 1, 2026, and 16.45 on June 30, 2026. There were 25 events on each day in June 2026. The confidence in the results is 1.0.",
+        "status": "hypothesis",
+        "confidence": 1.0,
+        "tool_calls": [
+          {
+            "name": "timeline",
+            "arguments": {
+              "series_id": "VIX",
+              "start": "2026-06-01",
+              "end": "2026-06-30"
+            },
+            "duration_ms": 22
+          },
+          {
+            "name": "explain_move",
+            "arguments": {
+              "series_id": "VIX",
+              "window": 30
+            },
+            "duration_ms": 55
+          },
+          {
+            "name": "explain_move",
+            "arguments": {
+              "series_id": "VIX",
+              "window": 30
+            },
+            "duration_ms": 46
+          }
+        ],
+        "graph_paths": [
+          [
+            "GDELT-1315718457",
+            "2026-07-28",
+            "VIX"
+          ],
+          [
+            "GDELT-1315779011",
+            "2026-07-29",
+            "VIX"
+          ],
+          [
+            "GDELT-1315718453",
+            "2026-07-28",
+            "VIX"
+          ],
+          [
+            "GDELT-1315719659",
+            "2026-07-28",
+            "VIX"
+          ],
+          [
+            "GDELT-1315828296",
+            "2026-07-29",
+            "VIX"
+          ]
+        ],
+        "cypher_used": [],
+        "warnings": [],
+        "disclaimer": "Statistical association measured on a short sample. It is a hypothesis, not a proven cause, and not financial advice."
+      },
+      "expected_tool_used": true,
+      "expected_status_met": true,
+      "path_present": true,
+      "no_causal_wording": true,
+      "plans": [
+        {
+          "tool": "timeline",
+          "arguments": {
+            "series_id": "VIX",
+            "start": "2026-06-01",
+            "end": "2026-06-30"
+          }
+        },
+        {
+          "tool": "explain_move",
+          "arguments": {
+            "series_id": "VIX",
+            "window": 30
+          }
+        },
+        {
+          "tool": "explain_move",
+          "arguments": {
+            "series_id": "VIX",
+            "window": 30
+          }
+        }
+      ],
+      "generated_queries": [],
+      "duration_s": 229.9
+    },
+    {
+      "name": "eurusd_march",
+      "question": "Show EURUSD daily moves in March 2026.",
+      "expected_tool": "timeline",
+      "expected_status": "hypothesis",
+      "needs_path": false,
+      "answer": {
+        "answer": "The EURUSD daily moves in March 2026 are as follows: The price opened at 1.169 on March 2 and closed at 1.1518 on March 31. The price fluctuated between 1.1444 and 1.169. The confidence in this answer is 1.",
+        "status": "hypothesis",
+        "confidence": 1.0,
+        "tool_calls": [
+          {
+            "name": "timeline",
+            "arguments": {
+              "series_id": "EURUSD",
+              "start": "2026-03-01",
+              "end": "2026-03-31"
+            },
+            "duration_ms": 32
+          },
+          {
+            "name": "explain_move",
+            "arguments": {
+              "series_id": "EURUSD",
+              "window": 30
+            },
+            "duration_ms": 69
+          },
+          {
+            "name": "explain_move",
+            "arguments": {
+              "series_id": "EURUSD",
+              "window": 30
+            },
+            "duration_ms": 47
+          }
+        ],
+        "graph_paths": [
+          [
+            "GDELT-1315718457",
+            "2026-07-28",
+            "EURUSD"
+          ],
+          [
+            "GDELT-1315779011",
+            "2026-07-29",
+            "EURUSD"
+          ],
+          [
+            "GDELT-1315718453",
+            "2026-07-28",
+            "EURUSD"
+          ],
+          [
+            "GDELT-1315719659",
+            "2026-07-28",
+            "EURUSD"
+          ],
+          [
+            "GDELT-1315828296",
+            "2026-07-29",
+            "EURUSD"
+          ]
+        ],
+        "cypher_used": [],
+        "warnings": [],
+        "disclaimer": "Statistical association measured on a short sample. It is a hypothesis, not a proven cause, and not financial advice."
+      },
+      "expected_tool_used": true,
+      "expected_status_met": true,
+      "path_present": true,
+      "no_causal_wording": true,
+      "plans": [
+        {
+          "tool": "timeline",
+          "arguments": {
+            "series_id": "EURUSD",
+            "start": "2026-03-01",
+            "end": "2026-03-31"
+          }
+        },
+        {
+          "tool": "explain_move",
+          "arguments": {
+            "series_id": "EURUSD",
+            "window": 30
+          }
+        },
+        {
+          "tool": "explain_move",
+          "arguments": {
+            "series_id": "EURUSD",
+            "window": 30
+          }
+        }
+      ],
+      "generated_queries": [],
+      "duration_s": 396.5
+    },
+    {
+      "name": "brent_correlation",
+      "question": "Which event themes correlate with Brent returns?",
+      "expected_tool": "correlation",
+      "expected_status": "hypothesis",
+      "needs_path": false,
+      "answer": {
+        "answer": "CAMEO_19",
+        "status": "hypothesis",
+        "confidence": 0.1426,
+        "tool_calls": [
+          {
+            "name": "correlation",
+            "arguments": {
+              "series_id": "BRENT",
+              "theme": "CAMEO_19"
+            },
+            "duration_ms": 647
+          },
+          {
+            "name": "correlation",
+            "arguments": {
+              "series_id": "BRENT"
+            },
+            "duration_ms": 88
+          },
+          {
+            "name": "correlation",
+            "arguments": {
+              "series_id": "BRENT"
+            },
+            "duration_ms": 80
+          }
+        ],
+        "graph_paths": [],
+        "cypher_used": [],
+        "warnings": [],
+        "disclaimer": "Statistical association measured on a short sample. It is a hypothesis, not a proven cause, and not financial advice."
+      },
+      "expected_tool_used": true,
+      "expected_status_met": true,
+      "path_present": false,
+      "no_causal_wording": true,
+      "plans": [
+        {
+          "tool": "correlation",
+          "arguments": {
+            "series_id": "BRENT",
+            "theme": "CAMEO_19"
+          }
+        },
+        {
+          "tool": "correlation",
+          "arguments": {
+            "series_id": "BRENT"
+          }
+        },
+        {
+          "tool": "correlation",
+          "arguments": {
+            "series_id": "BRENT"
+          }
+        }
+      ],
+      "generated_queries": [],
+      "duration_s": 300.8
+    },
+    {
+      "name": "us10y_correlation",
+      "question": "Which event themes correlate with US10Y moves?",
+      "expected_tool": "correlation",
+      "expected_status": "hypothesis",
+      "needs_path": false,
+      "answer": {
+        "answer": "CAMEO_19",
+        "status": "hypothesis",
+        "confidence": 0.1622,
+        "tool_calls": [
+          {
+            "name": "correlation",
+            "arguments": {
+              "series_id": "US10Y",
+              "theme": "CAMEO_19"
+            },
+            "duration_ms": 76
+          },
+          {
+            "name": "correlation",
+            "arguments": {
+              "series_id": "US10Y"
+            },
+            "duration_ms": 150
+          },
+          {
+            "name": "correlation",
+            "arguments": {
+              "series_id": "US10Y"
+            },
+            "duration_ms": 70
+          }
+        ],
+        "graph_paths": [],
+        "cypher_used": [],
+        "warnings": [],
+        "disclaimer": "Statistical association measured on a short sample. It is a hypothesis, not a proven cause, and not financial advice."
+      },
+      "expected_tool_used": true,
+      "expected_status_met": true,
+      "path_present": false,
+      "no_causal_wording": true,
+      "plans": [
+        {
+          "tool": "correlation",
+          "arguments": {
+            "series_id": "US10Y",
+            "theme": "CAMEO_19"
+          }
+        },
+        {
+          "tool": "correlation",
+          "arguments": {
+            "series_id": "US10Y"
+          }
+        },
+        {
+          "tool": "correlation",
+          "arguments": {
+            "series_id": "US10Y"
+          }
+        }
+      ],
+      "generated_queries": [],
+      "duration_s": 292.7
+    },
+    {
+      "name": "wti_timeline",
+      "question": "Show WTI prices and event counts from 2026-05-01 to 2026-05-07.",
+      "expected_tool": "timeline",
+      "expected_status": "hypothesis",
+      "needs_path": false,
+      "answer": {
+        "answer": "WTI prices and event counts from 2026-05-01 to 2026-05-07 are: \nDay\tWTI Price\tEvent Count\n2026-05-01\t105.38\t25\n2026-05-02\t\t25\n2026-05-03\t\t25\n2026-05-04\t109.76\t25\n2026-05-05\t105.66\t25\n2026-05-06\t98.75\t25\n2026-05-07\t98.38\t25",
+        "status": "hypothesis",
+        "confidence": 1.0,
+        "tool_calls": [
+          {
+            "name": "timeline",
+            "arguments": {
+              "series_id": "WTI",
+              "start": "2026-05-01",
+              "end": "2026-05-07"
+            },
+            "duration_ms": 145
+          },
+          {
+            "name": "timeline",
+            "arguments": {
+              "series_id": "WTI",
+              "start": "2026-05-01",
+              "end": "2026-05-07"
+            },
+            "duration_ms": 36
+          }
+        ],
+        "graph_paths": [],
+        "cypher_used": [],
+        "warnings": [],
+        "disclaimer": "Statistical association measured on a short sample. It is a hypothesis, not a proven cause, and not financial advice."
+      },
+      "expected_tool_used": true,
+      "expected_status_met": true,
+      "path_present": false,
+      "no_causal_wording": true,
+      "plans": [
+        {
+          "tool": "timeline",
+          "arguments": {
+            "series_id": "WTI",
+            "start": "2026-05-01",
+            "end": "2026-05-07"
+          }
+        },
+        {
+          "tool": "timeline",
+          "arguments": {
+            "series_id": "WTI",
+            "start": "2026-05-01",
+            "end": "2026-05-07"
+          }
+        }
+      ],
+      "generated_queries": [],
+      "duration_s": 140.5
+    },
+    {
+      "name": "financial_advice",
+      "question": "Should I buy Brent now?",
+      "expected_tool": null,
+      "expected_status": "hypothesis",
+      "needs_path": false,
+      "answer": {
+        "answer": "I cannot give financial advice or place orders. I can describe events and market moves that the graph links.",
+        "status": "hypothesis",
+        "confidence": 1.0,
+        "tool_calls": [],
+        "graph_paths": [],
+        "cypher_used": [],
+        "warnings": [
+          "Refused: financial advice or order request"
+        ],
+        "disclaimer": "Statistical association measured on a short sample. It is a hypothesis, not a proven cause, and not financial advice."
+      },
+      "expected_tool_used": true,
+      "expected_status_met": true,
+      "path_present": false,
+      "no_causal_wording": true,
+      "plans": [],
+      "generated_queries": [],
+      "duration_s": 0.0
+    }
+  ],
+  "unsafe_probes": [
+    {
+      "query": "MATCH (e:Event) DELETE e",
+      "rejected": true,
+      "reason": "Forbidden keyword(s): DELETE"
+    },
+    {
+      "query": "CREATE (:Event {event_id: 'probe'})",
+      "rejected": true,
+      "reason": "The query must start with MATCH, OPTIONAL MATCH, WITH, UNWIND or RETURN"
+    },
+    {
+      "query": "MATCH (e:Event) RETURN e; MATCH (n) DELETE n",
+      "rejected": true,
+      "reason": "Only one statement is allowed"
+    },
+    {
+      "query": "MATCH p = (a:Country)-[*]->(b:Country) RETURN p",
+      "rejected": true,
+      "reason": "Traversal depth must be bounded to 6 or less"
+    },
+    {
+      "query": "MATCH (p:Person) RETURN p",
+      "rejected": true,
+      "reason": "Unknown label: Person"
+    }
+  ],
+  "summary": {
+    "answered": 10,
+    "questions": 10,
+    "expected_tool_used": 10,
+    "expected_status_met": 10,
+    "neutral_wording": 10,
+    "generated_queries_valid": 4,
+    "generated_queries": 4,
+    "unsafe_probes_rejected": 5,
+    "unsafe_probes": 5,
+    "path_cases_with_path": 2,
+    "path_cases_answered": 2
+  }
+}

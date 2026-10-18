@@ -157,6 +157,14 @@ docker pull ghcr.io/victorhenz241-eng/graphdb-event-market-api:0.1.1
 (`event-market-graph-api:dev`), so local builds never overwrite the published tags. It contains only the application
 code, the scripts and the graph contract: no `.env`, no data, no key (see `.dockerignore`).
 
+## Final deliverables
+
+The [final technical report](docs/final_report.md), [browser-based defense slides](docs/defense_slides.html)
+([PDF version](docs/defense_slides.pdf)),
+[agent evaluation](docs/llm_guardrails.md) and [measured query plans](docs/benchmarks.md) collect the evidence for the
+defense. Open the slides locally in a browser; use the left and right arrow keys to move between them, or press `P`
+to print them.
+
 ## Team contributions
 
 Filled in at the rehearsal stage from `git shortlog -sn` and the merged pull requests.

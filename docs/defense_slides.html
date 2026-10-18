@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Event–Market Graph | Defense</title>
+  <style>
+    :root { color-scheme: dark; font-family: Avenir, Arial, sans-serif; background: #0d1824; color: #f5f6f2; }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    .slide { display: none; min-height: 100vh; padding: 7vh 8vw 9vh; }
+    .slide.active { display: flex; flex-direction: column; justify-content: center; }
+    h1 { font-size: clamp(3rem, 6vw, 6rem); line-height: 1.05; max-width: 13ch; margin: 0 0 3rem; }
+    h2 { font-size: clamp(2.2rem, 4vw, 4.2rem); line-height: 1.12; margin: 0 0 2.5rem; }
+    h3 { font-size: clamp(1.3rem, 2.1vw, 2rem); margin: 0 0 .8rem; color: #8ed9ce; }
+    p, li, td, th { font-size: clamp(1.15rem, 1.65vw, 1.7rem); line-height: 1.38; }
+    p { max-width: 64ch; margin: .5rem 0 1rem; }
+    ul { padding-left: 1.3em; max-width: 70ch; }
+    li { margin: .6em 0; }
+    .accent { color: #8ed9ce; }
+    .muted { color: #b9c7d0; }
+    .lead { font-size: clamp(1.5rem, 2.5vw, 2.5rem); max-width: 30ch; }
+    .columns { display: grid; grid-template-columns: 1fr 1fr; gap: 5vw; align-items: center; }
+    .columns.wide-image { grid-template-columns: .9fr 1.1fr; }
+    .evidence { display: block; max-width: 100%; max-height: 62vh; object-fit: contain; background: #fff; border-radius: 4px; }
+    table { border-collapse: collapse; width: min(100%, 1100px); margin-top: 1.5rem; }
+    th, td { text-align: left; padding: .55em .65em; border-bottom: 1px solid #48606d; }
+    th { color: #8ed9ce; }
+    .small { font-size: clamp(.95rem, 1.1vw, 1.25rem); color: #b9c7d0; }
+    .note { margin-top: 1.5rem; }
+    .schema-line { font-size: clamp(1.35rem, 2.25vw, 2.4rem); line-height: 1.4; margin: .55rem 0; }
+    .example { font-size: clamp(1.35rem, 2vw, 2rem); line-height: 1.45; }
+    .counter { position: fixed; bottom: 2vh; right: 3vw; font-size: .9rem; color: #a9bac4; }
+    .help { position: fixed; bottom: 2vh; left: 3vw; font-size: .9rem; color: #a9bac4; }
+    @media (max-width: 850px) { .columns, .columns.wide-image { grid-template-columns: 1fr; } .slide { padding: 5vh 6vw 10vh; } .evidence { max-height: 34vh; } }
+    @page { size: 16in 9in; margin: 0; }
+    @media print { html, body { print-color-adjust: exact; -webkit-print-color-adjust: exact; } .slide, .slide.active { display: flex; flex-direction: column; justify-content: center; width: 100vw; height: 100vh; min-height: 0; break-after: page; } .columns, .columns.wide-image { grid-template-columns: 1fr 1fr; } .counter, .help { display: none; } }
+  </style>
+</head>
+<body>
+  <section class="slide active" aria-label="Slide 1">
+    <h1>Event–Market Graph</h1>
+    <p class="lead">Geopolitical events and market moves in one auditable Neo4j graph</p>
+    <p class="muted">GraphDB team defense · October 2026</p>
+  </section>
+
+  <section class="slide" aria-label="Slide 2">
+    <h2>The data we can reproduce</h2>
+    <div class="columns">
+      <div>
+        <h3>GDELT</h3>
+        <p>4,526 selected geopolitical and central-bank events from February through July 2026.</p>
+        <h3>FRED</h3>
+        <p>880 daily observations across Brent, WTI, EURUSD, USDJPY, the US 10-year yield and VIX.</p>
+      </div>
+      <div>
+        <p class="lead">Events and prices meet on 202 shared <span class="accent">TradingDay</span> nodes.</p>
+        <p class="small">The 25 most mentioned tension events per day are retained. Counts describe this selected corpus.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" aria-label="Slide 3">
+    <h2>A shared day links events to prices</h2>
+    <p class="schema-line">Country ← <span class="accent">Event</span> → TradingDay ← <span class="accent">PriceSeries</span></p>
+    <p class="schema-line">Theme ← Event &nbsp;&nbsp; Claim → Event, PriceSeries</p>
+    <p class="note">A Claim stores a proposed link, its status and its evidence. The full relationship directions and properties are in the graph contract.</p>
+  </section>
+
+  <section class="slide" aria-label="Slide 4">
+    <h2>Index measurement on the loaded graph</h2>
+    <table>
+      <thead><tr><th>Query</th><th>With Event.date index</th><th>Without index</th></tr></thead>
+      <tbody>
+        <tr><td>Top events</td><td>9,355 database hits</td><td>18,318 database hits</td></tr>
+        <tr><td>Top countries</td><td>45,263 database hits</td><td>22,767 database hits</td></tr>
+      </tbody>
+    </table>
+    <p class="note">The index helps a selective event ranking. It hurts the country count over nearly the entire event window.</p>
+    <p class="small">Neo4j EXPLAIN and PROFILE, five warmed runs; full plans and timings in benchmarks.md.</p>
+  </section>
+
+  <section class="slide" aria-label="Slide 5">
+    <h2>Agent answers expose their evidence</h2>
+    <div class="columns">
+      <div>
+        <p>Four tools query the graph, measure correlation, build a timeline or list candidate events before a move.</p>
+        <p>The answer includes its status, tool calls, Cypher and available graph paths.</p>
+        <p class="small">Read-only Neo4j sessions, bounded Cypher, schema checks, causal wording filter and refusal of trading advice.</p>
+      </div>
+      <div class="example">
+        <h3>Brent example</h3>
+        <p>“Which events preceded the largest Brent move?”</p>
+        <p><span class="accent">Tool</span> explain_move<br><span class="accent">Status</span> hypothesis<br><span class="accent">Graph paths</span> 5</p>
+        <p class="small">The agent lists candidate events. It does not label them as causes.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" aria-label="Slide 6">
+    <h2>Measured quality</h2>
+    <div class="columns">
+      <div>
+        <h3>Code and CI</h3>
+        <p class="lead">135 tests passed<br>94% coverage<br>Pylint 10.00/10</p>
+        <p class="small">One proxy health test skipped with only Neo4j running. Lint and Tests succeeded on the stage-four main commit.</p>
+      </div>
+      <div>
+        <h3>Agent evaluation</h3>
+        <p class="lead">5/5 unsafe probes rejected<br>2/2 required paths returned</p>
+        <p>Four of ten answers were incomplete despite correct tool selection.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" aria-label="Slide 7">
+    <h2>What the evidence does not establish</h2>
+    <ul>
+      <li>Events preceding moves and measured correlations do not prove causes.</li>
+      <li>GDELT is machine coded and the six-month sample excludes many events and instruments.</li>
+      <li>A local language model can write an irrelevant but syntactically valid query. The visible Cypher and paths matter.</li>
+      <li>Several historic PRs lack the required review comments; the team must finish rehearsal after the stage-five merge.</li>
+    </ul>
+  </section>
+
+  <div class="help" aria-hidden="true">← → to navigate · P to print</div>
+  <div class="counter" aria-live="polite"></div>
+  <script>
+    const slides = [...document.querySelectorAll('.slide')];
+    const counter = document.querySelector('.counter');
+    let current = 0;
+    function show(index) {
+      current = Math.max(0, Math.min(index, slides.length - 1));
+      slides.forEach((slide, i) => slide.classList.toggle('active', i === current));
+      counter.textContent = `${current + 1} / ${slides.length}`;
+      location.hash = `slide-${current + 1}`;
+    }
+    document.addEventListener('keydown', event => {
+      if (event.key === 'ArrowRight' || event.key === 'PageDown' || event.key === ' ') show(current + 1);
+      if (event.key === 'ArrowLeft' || event.key === 'PageUp') show(current - 1);
+      if (event.key.toLowerCase() === 'p') window.print();
+    });
+    const fromHash = Number(location.hash.replace('#slide-', ''));
+    show(Number.isInteger(fromHash) && fromHash > 0 ? fromHash - 1 : 0);
+  </script>
+</body>
+</html>

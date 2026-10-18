@@ -47,6 +47,15 @@ PLAN_PROMPT = """You plan the next step of a data agent that answers questions a
 Series ids: {series}. Tools:
 {tools}
 Graph schema: {schema}
+Relationship directions: (e:Event)-[:OCCURRED_IN]->(c:Country),
+(e:Event)-[:HAS_THEME]->(t:Theme), (e:Event)-[:ON_DAY]->(d:TradingDay),
+(s:PriceSeries)-[:PRICE_ON]->(d:TradingDay), (s:PriceSeries)-[:TRACKS]->(asset).
+Do not connect Event directly to PriceSeries or use TRACKS from Event.
+Event.date and TradingDay.date are Neo4j DATE values. Compare them with date('YYYY-MM-DD'),
+not a string. For a country's events in a month, use this pattern:
+MATCH (e:Event)-[:OCCURRED_IN]->(c:Country {{iso3: 'FRA'}})
+WHERE e.date >= date('2026-03-01') AND e.date < date('2026-04-01')
+RETURN count(e) AS event_count
 The graph only covers 2026-02-01 to 2026-07-31.
 `explain_move` always looks at the most recent `window` days of a series, so when the question is about a given month
 or date range, use `timeline` with `start` and `end` instead.

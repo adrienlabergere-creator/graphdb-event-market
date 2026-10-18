@@ -83,6 +83,11 @@ def build_graph(session: Any, llm: LLM):
             chosen = with_retry(llm.plan, state["question"], state["history"])
         except (ValidationError, ValueError):
             return {"plan": Plan(tool="finish"), "warnings": state["warnings"] + ["Invalid plan from the model"]}
+        if chosen.tool != "finish" and any(
+            _signature(item) == _signature({"tool": chosen.tool, "arguments": chosen.arguments})
+            for item in state["history"]
+        ):
+            return {"plan": Plan(tool="finish"), "warnings": state["warnings"] + ["Repeated tool call skipped"]}
         return {"plan": chosen}
 
     def run_tools(state: State) -> State:
