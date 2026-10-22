@@ -111,6 +111,24 @@ def check(  # pylint: disable=too-many-return-statements
     return None
 
 
+def explain(events: list[dict]) -> None:
+    """Print what the agent did in a rejected run: each plan, each tool's Cypher, error and result."""
+    for event in events:
+        data = event["data"]
+        if event["type"] == "plan":
+            print(f"    plan: {data['tool']} {json.dumps(data['arguments'], default=str)[:400]}")
+        elif event["type"] == "tool":
+            print(f"    tool: {data['tool']} ok={data['ok']} nodes={len(data['nodes'])}")
+            if data.get("error"):
+                print(f"      error: {data['error']}")
+            for cypher in data.get("cypher", []):
+                print(f"      cypher run: {cypher[:400]}")
+            if data.get("result") is not None:
+                print(f"      result: {json.dumps(data['result'], default=str)[:400]}")
+        elif event["type"] in ("validate", "answer") and data.get("warnings"):
+            print(f"    {event['type']} warnings: {data['warnings']}")
+
+
 def ask(question: str, key: str) -> list[dict] | None:
     """Events of one run, or None when the request failed. A rate-limited request waits and is sent again."""
     for _ in range(3):
@@ -142,6 +160,7 @@ def record_one(preset_id: str, question: str, expected: str, pattern: str | None
         time.sleep(2)
         if problem:
             print(f"  rejected: {problem}")
+            explain(events)
             continue
         answer = next(e["data"] for e in events if e["type"] == "answer")
         tools = [e["data"]["tool"] + ("" if e["data"]["ok"] else " (blocked)") for e in events if e["type"] == "tool"]
