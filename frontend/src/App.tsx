@@ -9,6 +9,7 @@ import { PRESETS, type Preset } from './agent/presets'
 import type { AgentEvent } from './agent/types'
 import { downloadTrace, loadTrace, useAgentRun, type Mode } from './agent/useAgentRun'
 import { useTheme } from './theme'
+import { STATIC } from './config'
 
 const EMPTY_WALK: Walk = { visited: new Set(), current: new Set(), pastHops: new Set(), currentHops: new Set(), focus: null }
 
@@ -18,7 +19,7 @@ export default function App() {
   const [activeId, setActiveId] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [walk, setWalk] = useState<Walk>(EMPTY_WALK)
-  const [mode, setMode] = useState<Mode>('live')
+  const [mode, setMode] = useState<Mode>(STATIC ? 'replay' : 'live')
   const [available, setAvailable] = useState<Set<string>>(new Set())
   const preset = useRef<Preset | undefined>(undefined)
 
@@ -64,8 +65,8 @@ export default function App() {
   const ask = async (question: string, p?: Preset) => {
     preset.current = p
     setActiveId(p?.id ?? null)
-    if (mode === 'replay' && p) {
-      const trace = await loadTrace(p.id)
+    if (mode === 'replay' || STATIC) {
+      const trace = p ? await loadTrace(p.id) : null
       if (trace) run.runReplay(trace)
       return
     }

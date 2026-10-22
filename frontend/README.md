@@ -22,6 +22,14 @@ To record the six presets at once, from the repo root with the stack running: `m
 to `public/traces/`. Retry some with `make traces IDS="vix-june iran-march"`. A single live run can also be saved from
 the page with **Save this run as a recording**, then moved to `public/traces/`.
 
+## Public build (Vercel)
+
+`npm run build:static` makes a version with no backend at all: the graph comes from `public/data/graph.json`
+(`make snapshot` from the repo root, stack running) and the agent runs are the recordings in `public/traces/`. Live
+mode, the question box and every call to the API are left out of the bundle, so the published page has nothing to
+abuse: no API key, no model, no database. `vercel.json` (project root: `frontend`) builds it this way and adds strict
+security headers (Content-Security-Policy, no framing, no sniffing, HSTS).
+
 ## Code
 
 | Path | Role |

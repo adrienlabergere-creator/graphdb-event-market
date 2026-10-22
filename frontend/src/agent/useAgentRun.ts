@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { askStream } from './stream'
+import { STATIC } from '../config'
 import type { AgentEvent, TimedEvent, Trace } from './types'
 
 export type Mode = 'live' | 'replay'
@@ -37,6 +38,7 @@ export function useAgentRun(onEvent: (e: AgentEvent) => void) {
   }
 
   const runLive = useCallback(async (q: string) => {
+    if (STATIC) return // the public build never calls the API
     const signal = begin(q)
     const t0 = performance.now()
     const recorded: TimedEvent[] = []

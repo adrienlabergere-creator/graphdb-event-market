@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { PRESETS, type Preset } from './presets'
 import type { Mode, Status } from './useAgentRun'
 import type { ThemeChoice } from '../theme'
+import { REPO_URL, STATIC } from '../config'
 
 interface Props {
   mode: Mode
@@ -75,6 +76,15 @@ export default function QuestionPanel(props: Props) {
         <div className="mt-0.5 text-[12px] text-faint">Geopolitical events and market moves · Feb–Jul 2026</div>
       </div>
 
+      {STATIC ? (
+        <p className="mx-2 mt-4 rounded-lg bg-hover px-3 py-2 text-[12px] leading-relaxed text-muted">
+          Recorded runs of the agent on our Neo4j graph. To ask your own questions, run the project locally:{' '}
+          <a href={REPO_URL} target="_blank" rel="noreferrer" className="text-accent underline-offset-2 hover:underline">
+            source on GitHub
+          </a>
+          .
+        </p>
+      ) : (
       <div className="mt-4 px-1">
         <Segmented
           value={mode}
@@ -86,6 +96,7 @@ export default function QuestionPanel(props: Props) {
           ]}
         />
       </div>
+      )}
 
       <div className="min-h-0 flex-1 overflow-y-auto">
         <Section>Questions</Section>
@@ -93,7 +104,7 @@ export default function QuestionPanel(props: Props) {
         <Section>Guardrails</Section>
         {guardrails.map(row)}
 
-        {mode === 'live' && (
+        {mode === 'live' && !STATIC && (
           <>
             <Section>Ask your own</Section>
             <form
