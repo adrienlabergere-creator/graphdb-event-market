@@ -60,7 +60,22 @@ def demo_api_fixture(client, monkeypatch):
 def test_classify_sorts_candidate_keys():
     """Event ids, dates, series and codes are told apart; plain words are ignored."""
     keys = demo.classify(["GDELT-12", "2026-06-02T00:00", "vix", "CAMEO_19", "IRN", "a fight"])
-    assert keys == {"events": ["GDELT-12"], "days": ["2026-06-02"], "series": ["VIX"], "codes": ["CAMEO_19", "IRN"]}
+    assert keys == {
+        "events": ["GDELT-12"],
+        "days": ["2026-06-02"],
+        "series": ["VIX"],
+        "codes": ["CAMEO_19", "IRN"],
+        "names": [],
+    }
+
+
+def test_cypher_literals_light_up_what_a_count_query_filters_on():
+    """A query that only returns a count still names its country and dates in its quoted values."""
+    cypher = "MATCH (e:Event)-[:OCCURRED_IN]->(c:Country) WHERE c.name = 'Iran' AND e.date >= date(\"2026-03-01\") RETURN count(e)"
+    literals = demo.cypher_literals({"cypher": cypher})
+    assert literals == ["Iran", "2026-03-01"]
+    assert demo.classify(literals, keep_names=True)["names"] == ["Iran"]
+    assert demo.classify(literals, keep_names=True)["days"] == ["2026-03-01"]
 
 
 def test_collect_strings_walks_nested_results():
