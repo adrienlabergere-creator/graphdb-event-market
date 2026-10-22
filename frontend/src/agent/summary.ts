@@ -7,7 +7,7 @@ import type { TimedEvent, ToolData } from './types'
 
 export type Lookup = (id: string) => ApiNode | undefined
 
-export interface Summary {
+interface Summary {
   tone: 'answer' | 'refused' | 'blocked' | 'empty'
   headline: string
   lead?: string
@@ -22,14 +22,14 @@ export function fmtDay(day: string): string {
 }
 
 // "SOUTH CAROLINA: fight (South Carolina, United States)" -> "Fight · South Carolina, United States"
-export function prettyTitle(title: string): string {
+function prettyTitle(title: string): string {
   const m = title.match(/^[^:]*:\s*(.+?)\s*\((.+)\)\s*$/)
   if (!m) return title
   const action = m[1].charAt(0).toUpperCase() + m[1].slice(1)
   return `${action} · ${m[2]}`
 }
 
-export const seriesName = (id: string, lookup: Lookup) => String(lookup(`PriceSeries:${id}`)?.props.name ?? id)
+const seriesName = (id: string, lookup: Lookup) => String(lookup(`PriceSeries:${id}`)?.props.name ?? id)
 const isRate = (id: string, lookup: Lookup) => lookup(`PriceSeries:${id}`)?.props.kind === 'rate'
 
 function strength(r: number): string {

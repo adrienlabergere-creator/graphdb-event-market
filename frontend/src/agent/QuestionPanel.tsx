@@ -43,7 +43,7 @@ function Segmented<T extends string>({ value, options, onChange, disabled }: {
   )
 }
 
-// Laid out like Claude's sidebar: a title, then sections of plain rows.
+// Sidebar: a title, then sections of plain rows (answers, then guardrails).
 export default function QuestionPanel(props: Props) {
   const { mode, setMode, status, available, activeId, onAsk, onStop, onDownload, theme, setTheme } = props
   const [text, setText] = useState('')
