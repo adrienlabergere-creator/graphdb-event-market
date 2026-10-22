@@ -149,7 +149,7 @@ export default function GraphView({ data, walk, theme }: Props) {
           const showFull = node === hover || labelled.has(node.id) || (visited && !current && node.label !== 'Event' && node.label !== 'TradingDay')
           if (alwaysLabelled(node) || showFull) {
             const fontSize = Math.max((current ? 12 : 10) / scale, 2)
-            ctx.font = `${current ? 600 : 400} ${fontSize}px ui-sans-serif, system-ui, -apple-system, sans-serif`
+            ctx.font = `${current ? 600 : 400} ${fontSize}px Geist, ui-sans-serif, system-ui, -apple-system, sans-serif`
             ctx.textAlign = 'center'
             ctx.textBaseline = 'top'
             ctx.fillStyle = current ? palette.hot : active && !visited ? palette.labelDim : palette.label
