@@ -31,6 +31,8 @@ MAX_STRINGS = 400
 EVENT_RE = re.compile(r"^(GDELT|CB)-[\w-]+$")
 DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}")
 CODE_RE = re.compile(r"^[A-Z][A-Z0-9_]{2,20}$")
+# Quoted values in a Cypher query: 'IRN', "Iran", '2026-03-01'...
+LITERAL_RE = re.compile(r"'([^'\\]{1,60})'|\"([^\"\\]{1,60})\"")
 
 
 def _key(var: str) -> str:
@@ -81,6 +83,10 @@ CALL {{
   UNION
   UNWIND $codes AS k MATCH (n) WHERE (n:Theme OR n:Country OR n:Currency OR n:Commodity) AND (n.code = k OR n.iso3 = k)
   RETURN n
+  UNION
+  UNWIND $names AS k MATCH (n) WHERE (n:Country OR n:Theme OR n:Currency OR n:Commodity)
+    AND toLower(coalesce(n.name, n.label)) = toLower(k)
+  RETURN n
 }}
 RETURN elementId(n) AS eid, {_node('n')} AS node
 LIMIT $limit
@@ -127,9 +133,21 @@ def collect_strings(value: Any, out: list[str]) -> list[str]:
     return out
 
 
-def classify(strings: list[str]) -> dict[str, list[str]]:
-    """Sort candidate keys by the label they could belong to. Neo4j confirms which ones exist."""
-    found: dict[str, set[str]] = {"events": set(), "days": set(), "series": set(), "codes": set()}
+def cypher_literals(arguments: dict) -> list[str]:
+    """The quoted values of a `graph_query` Cypher query: what it filters on, even when it only returns a count."""
+    cypher = arguments.get("cypher")
+    if not isinstance(cypher, str):
+        return []
+    return [single or double for single, double in LITERAL_RE.findall(cypher)]
+
+
+def classify(strings: list[str], keep_names: bool = False) -> dict[str, list[str]]:
+    """Sort candidate keys by the label they could belong to. Neo4j confirms which ones exist.
+
+    With `keep_names`, other short texts are kept as possible names ("Iran", "Fight"): used for Cypher literals only,
+    since tool results are full of free text.
+    """
+    found: dict[str, set[str]] = {"events": set(), "days": set(), "series": set(), "codes": set(), "names": set()}
     for text in strings:
         text = text.strip()
         if EVENT_RE.match(text):
@@ -140,12 +158,16 @@ def classify(strings: list[str]) -> dict[str, list[str]]:
             found["series"].add(text.upper())
         elif CODE_RE.match(text):
             found["codes"].add(text)
+        elif keep_names and text and any(c.isalpha() for c in text):
+            found["names"].add(text)
     return {kind: sorted(keys) for kind, keys in found.items()}
 
 
 def touched_graph(session: Any, tool: str, arguments: dict, data: Any) -> dict:
     """Nodes touched by one tool call, the edges walked between them, and the edges that attach new events."""
     keys = classify(collect_strings([arguments, data], []))
+    for kind, values in classify(cypher_literals(arguments), keep_names=True).items():
+        keys[kind] = sorted(set(keys[kind]) | set(values))
     rows = list(session.run(RESOLVE, limit=MAX_TOUCHED, **keys))
     nodes = [r["node"] for r in rows]
     hops = [r["edge"] for r in session.run(HOPS, eids=[r["eid"] for r in rows])] if rows else []
