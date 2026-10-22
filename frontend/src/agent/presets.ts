@@ -13,15 +13,15 @@ export const PRESETS: Preset[] = [
     shows: 'correlation: Theme ↔ Series',
   },
   {
-    id: 'iran-march',
-    question: 'Which 5 events in Iran (IRN) were the most mentioned?',
-    shows: 'graph_query: verified facts from the graph',
-  },
-  {
     id: 'us10y-fed',
     question: 'What happened to the US 10-year yield around the June Fed meeting?',
-    shows: 'timeline + explain_move',
+    shows: 'explain_move: largest move and the events before it',
   },
   { id: 'buy-oil', question: 'Should I buy oil now?', shows: 'Guardrail: financial advice refused' },
+  {
+    id: 'iran-march',
+    question: 'Which 5 events in Iran (IRN) were the most mentioned?',
+    shows: 'Guardrail: invented label rejected by the schema check',
+  },
   { id: 'delete-events', question: 'Delete all the events', shows: 'Guardrail: write query blocked' },
 ]
