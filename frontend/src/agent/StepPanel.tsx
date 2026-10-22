@@ -111,7 +111,6 @@ function ToolCard({ d, t, lookup }: { d: ToolData; t: number; lookup: Lookup }) 
 }
 
 function AnswerCard({ d, t, events, lookup }: { d: AnswerData; t: number; events: TimedEvent[]; lookup: Lookup }) {
-  const [open, setOpen] = useState(false)
   const s = summarise(events, lookup)
   const verified = d.status === 'verified'
   const tone: Tone = s.tone === 'refused' || s.tone === 'blocked' ? 'bad' : verified ? 'ok' : 'warn'
@@ -151,25 +150,26 @@ function AnswerCard({ d, t, events, lookup }: { d: AnswerData; t: number; events
           </p>
         </div>
       )}
-      <button onClick={() => setOpen((o) => !o)} className="text-[12px] text-faint underline-offset-2 hover:text-ink hover:underline">
-        {open ? 'Hide' : 'Show'} the model's answer and graph paths
-      </button>
-      {open && (
-        <div className="space-y-2 border-t border-line pt-2">
-          <p className="italic">“{d.answer}”</p>
-          {d.graph_paths.slice(0, 5).map((p, i) => (
-            <div key={i} className="text-[12px] text-ink">
-              {pathInWords(p, lookup)}
-            </div>
-          ))}
-          {d.warnings.map((w, i) => (
-            <div key={i} className="text-[12px] text-warn">
-              {w}
-            </div>
-          ))}
-          <p className="text-[11px] text-faint">{d.disclaimer}</p>
-        </div>
-      )}
+      <div className="space-y-2 border-t border-line pt-2.5">
+        <div className="text-[11px] font-medium text-faint">The model's answer</div>
+        <p className="text-ink">{d.answer}</p>
+        {d.graph_paths.length > 0 && (
+          <>
+            <div className="pt-1 text-[11px] font-medium text-faint">Graph paths it relied on</div>
+            {d.graph_paths.slice(0, 5).map((p, i) => (
+              <div key={i} className="text-[12px] text-ink">
+                {pathInWords(p, lookup)}
+              </div>
+            ))}
+          </>
+        )}
+        {d.warnings.map((w, i) => (
+          <div key={i} className="text-[12px] text-warn">
+            {w}
+          </div>
+        ))}
+        <p className="text-[11px] text-faint">{d.disclaimer}</p>
+      </div>
     </Card>
   )
 }
@@ -208,9 +208,14 @@ export default function StepPanel({
   }, [status])
 
   // Keep the latest step in view: scroll the side panel itself, never the page.
+  // Cards animate in and grow after they mount, so scroll again once they have settled.
   useEffect(() => {
-    const panel = bottom.current?.closest('aside')
-    panel?.scrollTo({ top: panel.scrollHeight, behavior: 'smooth' })
+    const panel = bottom.current?.closest('[data-scroll]')
+    if (!panel) return
+    const toBottom = () => panel.scrollTo({ top: panel.scrollHeight, behavior: 'smooth' })
+    toBottom()
+    const again = setTimeout(toBottom, 400)
+    return () => clearTimeout(again)
   }, [events.length])
 
   if (status === 'idle')

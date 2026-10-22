@@ -1,4 +1,4 @@
-import type { Resolved } from '../theme'
+import type { Theme } from '../theme'
 import type { ApiNode, Label } from '../types'
 
 // Node colours, chosen to read on both the ivory and the charcoal background.
@@ -28,7 +28,7 @@ interface GraphPalette {
   day: string
 }
 
-export const PALETTES: Record<Resolved, GraphPalette> = {
+export const PALETTES: Record<Theme, GraphPalette> = {
   light: {
     background: '#faf9f5',
     label: '#3d3d3a',

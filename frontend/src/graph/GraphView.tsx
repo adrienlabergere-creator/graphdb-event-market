@@ -3,7 +3,7 @@ import ForceGraph2D, { type ForceGraphMethods } from 'react-force-graph-2d'
 import { forceX, forceY } from 'd3-force'
 import type { GLink, GNode } from '../types'
 import { COLORS, PALETTES, alwaysLabelled, nodeColor, nodeName, nodeRadius, shortName } from './style'
-import type { Resolved } from '../theme'
+import type { Theme } from '../theme'
 import { EVENT_BAND_Y } from './layout'
 import { dayIdOf } from './useGraph'
 
@@ -19,7 +19,7 @@ export interface Walk {
 interface Props {
   data: { nodes: GNode[]; links: GLink[] }
   walk: Walk
-  theme: Resolved
+  theme: Theme
 }
 
 const endId = (end: string | GNode) => (typeof end === 'string' ? end : end.id)
@@ -146,7 +146,8 @@ export default function GraphView({ data, walk, theme }: Props) {
           }
           ctx.globalAlpha = 1
           // Full names for what the agent is on (within the label budget) and the hovered node.
-          const showFull = node === hover || labelled.has(node.id) || (visited && !current && node.label !== 'Event' && node.label !== 'TradingDay')
+          // Countries keep their code on the crowded bottom row; the full name shows on hover.
+          const showFull = node === hover || (node.label !== 'Country' && (labelled.has(node.id) || (visited && !current && node.label !== 'Event' && node.label !== 'TradingDay')))
           if (alwaysLabelled(node) || showFull) {
             const fontSize = Math.max((current ? 12 : 10) / scale, 2)
             ctx.font = `${current ? 600 : 400} ${fontSize}px Geist, ui-sans-serif, system-ui, -apple-system, sans-serif`

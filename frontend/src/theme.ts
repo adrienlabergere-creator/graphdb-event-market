@@ -1,45 +1,35 @@
 import { useEffect, useState } from 'react'
 
-export type ThemeChoice = 'system' | 'light' | 'dark'
-export type Resolved = 'light' | 'dark'
+export type Theme = 'light' | 'dark'
 
 const KEY = 'demo-theme'
 
-function stored(): ThemeChoice {
+// The first visit follows the computer's setting; after a click, the choice is kept.
+function initial(): Theme {
   try {
     const v = localStorage.getItem(KEY)
-    return v === 'light' || v === 'dark' ? v : 'system'
+    if (v === 'light' || v === 'dark') return v
   } catch {
-    return 'system'
+    /* storage blocked */
   }
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
 }
 
-const media = () => window.matchMedia('(prefers-color-scheme: dark)')
-
-// Light / dark / follow the system. The choice sits on <html data-theme> so the CSS tokens switch with it.
 export function useTheme() {
-  const [choice, setChoice] = useState<ThemeChoice>(stored)
-  const [systemDark, setSystemDark] = useState(() => media().matches)
+  const [theme, setThemeState] = useState<Theme>(initial)
 
   useEffect(() => {
-    const m = media()
-    const onChange = (e: MediaQueryListEvent) => setSystemDark(e.matches)
-    m.addEventListener('change', onChange)
-    return () => m.removeEventListener('change', onChange)
-  }, [])
+    document.documentElement.setAttribute('data-theme', theme)
+  }, [theme])
 
-  const resolved: Resolved = choice === 'system' ? (systemDark ? 'dark' : 'light') : choice
-
-  useEffect(() => {
-    const root = document.documentElement
-    if (choice === 'system') root.removeAttribute('data-theme')
-    else root.setAttribute('data-theme', choice)
+  const setTheme = (t: Theme) => {
+    setThemeState(t)
     try {
-      localStorage.setItem(KEY, choice)
+      localStorage.setItem(KEY, t)
     } catch {
       /* storage blocked: the choice lasts for this visit */
     }
-  }, [choice])
+  }
 
-  return { choice, setChoice, resolved }
+  return { theme, setTheme }
 }
