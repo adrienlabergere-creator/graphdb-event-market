@@ -9,6 +9,8 @@ import { PRESETS, type Preset } from './agent/presets'
 import type { AgentEvent } from './agent/types'
 import { downloadTrace, loadTrace, useAgentRun, type Mode } from './agent/useAgentRun'
 import { useTheme } from './theme'
+import { useResizable } from './useResizable'
+import { ResizeHandle } from './ResizeHandle'
 import { STATIC } from './config'
 
 const EMPTY_WALK: Walk = { visited: new Set(), current: new Set(), pastHops: new Set(), currentHops: new Set(), focus: null }
@@ -16,6 +18,8 @@ const EMPTY_WALK: Walk = { visited: new Set(), current: new Set(), pastHops: new
 export default function App() {
   const { data, load, merge, nodesById } = useGraph()
   const theme = useTheme()
+  const left = useResizable('demo-left-width', 288, 220, 460)
+  const right = useResizable('demo-right-width', 400, 320, 680)
   const [activeId, setActiveId] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [walk, setWalk] = useState<Walk>(EMPTY_WALK)
@@ -85,8 +89,13 @@ export default function App() {
   const lookup = (id: string) => nodesById.current.get(id)
 
   return (
-    <div className="grid h-full grid-cols-[288px_1fr_400px] bg-canvas font-sans text-ink">
-      <aside className="overflow-hidden border-r border-line bg-sidebar">
+    <div
+      className="grid h-full bg-canvas font-sans text-ink"
+      style={{ gridTemplateColumns: `${left.width}px minmax(0, 1fr) ${right.width}px`, gridTemplateRows: "minmax(0, 1fr)" }}
+    >
+      <aside className="relative border-r border-line bg-sidebar">
+        <ResizeHandle side="left" onPointerDown={left.startDrag(1)} onDoubleClick={left.reset} />
+        <div className="h-full overflow-hidden">
         <QuestionPanel
           mode={mode}
           setMode={setMode}
@@ -96,9 +105,10 @@ export default function App() {
           onAsk={ask}
           onStop={run.stop}
           onDownload={canDownload && trace ? () => downloadTrace(trace, preset.current?.id ?? `run-${Date.now()}`) : null}
-          theme={theme.choice}
-          setTheme={theme.setChoice}
+          theme={theme.theme}
+          setTheme={theme.setTheme}
         />
+        </div>
       </aside>
 
       <main className="flex min-w-0 flex-col">
@@ -109,12 +119,14 @@ export default function App() {
           {error ? (
             <p className="p-6 text-sm text-bad">{error}</p>
           ) : (
-            <GraphView data={data} walk={walk} theme={theme.resolved} />
+            <GraphView data={data} walk={walk} theme={theme.theme} />
           )}
         </div>
       </main>
 
-      <aside className="overflow-y-auto border-l border-line bg-canvas px-4 py-4">
+      <aside className="relative border-l border-line bg-canvas">
+        <ResizeHandle side="right" onPointerDown={right.startDrag(-1)} onDoubleClick={right.reset} />
+        <div data-scroll className="h-full overflow-y-auto px-4 py-4">
         <StepPanel
           events={run.events}
           status={run.status}
@@ -123,6 +135,7 @@ export default function App() {
           question={run.question}
           lookup={lookup}
         />
+        </div>
       </aside>
     </div>
   )

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { PRESETS, type Preset } from './presets'
 import type { Mode, Status } from './useAgentRun'
-import type { ThemeChoice } from '../theme'
+import type { Theme } from '../theme'
 import { REPO_URL, STATIC } from '../config'
 
 interface Props {
@@ -13,8 +13,8 @@ interface Props {
   onAsk: (question: string, preset?: Preset) => void
   onStop: () => void
   onDownload: (() => void) | null
-  theme: ThemeChoice
-  setTheme: (t: ThemeChoice) => void
+  theme: Theme
+  setTheme: (t: Theme) => void
 }
 
 function Section({ children }: { children: string }) {
@@ -156,7 +156,6 @@ export default function QuestionPanel(props: Props) {
           options={[
             { value: 'light', label: 'Light' },
             { value: 'dark', label: 'Dark' },
-            { value: 'system', label: 'System' },
           ]}
         />
         <p className="px-1 text-[11px] leading-relaxed text-faint">

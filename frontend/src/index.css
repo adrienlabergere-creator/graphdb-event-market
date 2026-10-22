@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-/* Warm neutrals with an indigo accent. Light by default, dark from the system setting or the switch in the sidebar. */
+/* Warm neutrals with an indigo accent. Light by default; dark from the switch in the sidebar (or the system on a first visit). */
 :root {
   --canvas: #faf9f5;
   --sidebar: #f5f4ed;
@@ -21,30 +21,6 @@
   --bad-soft: rgba(181, 64, 42, 0.08);
   --code: #f0eee6;
   color-scheme: light;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --canvas: #262624;
-    --sidebar: #1f1e1d;
-    --surface: #30302e;
-    --hover: rgba(245, 244, 239, 0.06);
-    --line: #3e3d39;
-    --ink: #f5f4ef;
-    --muted: #c2c0b6;
-    --faint: #8f8d85;
-    --accent: #8c9bff;
-    --accent-ink: #16171d;
-    --accent-soft: rgba(140, 155, 255, 0.14);
-    --ok: #7fb58f;
-    --ok-soft: rgba(127, 181, 143, 0.12);
-    --warn: #d6a454;
-    --warn-soft: rgba(214, 164, 84, 0.12);
-    --bad: #e08a74;
-    --bad-soft: rgba(224, 138, 116, 0.1);
-    --code: #1f1e1d;
-    color-scheme: dark;
-  }
 }
 
 :root[data-theme="dark"] {
