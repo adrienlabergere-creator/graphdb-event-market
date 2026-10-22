@@ -1,15 +1,63 @@
+import type { Resolved } from '../theme'
 import type { ApiNode, Label } from '../types'
 
+// Node colours, chosen to read on both the ivory and the charcoal background.
 export const COLORS: Record<Label, string> = {
-  Event: '#f97316',
-  Country: '#38bdf8',
-  Theme: '#a78bfa',
-  TradingDay: '#64748b',
-  PriceSeries: '#22c55e',
-  Commodity: '#eab308',
-  Currency: '#14b8a6',
-  Claim: '#f43f5e',
+  Event: '#d97757',
+  Country: '#6a9bcc',
+  Theme: '#9a86c9',
+  TradingDay: '#a8a59a',
+  PriceSeries: '#5f9b6d',
+  Commodity: '#c39a3c',
+  Currency: '#4a9a96',
+  Claim: '#c4566a',
 }
+
+// Everything else the canvas draws, per theme (the canvas cannot read CSS variables).
+export interface GraphPalette {
+  background: string
+  label: string
+  labelDim: string
+  link: string
+  priceLink: string
+  linkDim: string
+  hot: string
+  hotPast: string
+  particle: string
+  halo: string
+  day: string
+}
+
+export const PALETTES: Record<Resolved, GraphPalette> = {
+  light: {
+    background: '#faf9f5',
+    label: '#3d3d3a',
+    labelDim: 'rgba(61,61,58,0.35)',
+    link: 'rgba(20,20,19,0.10)',
+    priceLink: 'rgba(95,155,109,0.10)',
+    linkDim: 'rgba(20,20,19,0.035)',
+    hot: '#c96442',
+    hotPast: 'rgba(201,100,66,0.45)',
+    particle: '#8a3a1f',
+    halo: '201,100,66',
+    day: '#b9b6aa',
+  },
+  dark: {
+    background: '#262624',
+    label: '#d6d4cb',
+    labelDim: 'rgba(214,212,203,0.3)',
+    link: 'rgba(245,244,239,0.10)',
+    priceLink: 'rgba(95,155,109,0.12)',
+    linkDim: 'rgba(245,244,239,0.035)',
+    hot: '#d97757',
+    hotPast: 'rgba(217,119,87,0.45)',
+    particle: '#f3d9a4',
+    halo: '217,119,87',
+    day: '#6b6a64',
+  },
+}
+
+export const nodeColor = (n: ApiNode, palette: GraphPalette) => (n.label === 'TradingDay' ? palette.day : COLORS[n.label])
 
 export const LEGEND: Label[] = ['Event', 'TradingDay', 'PriceSeries', 'Theme', 'Country', 'Commodity', 'Currency']
 

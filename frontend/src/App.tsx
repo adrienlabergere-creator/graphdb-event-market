@@ -8,11 +8,14 @@ import StepPanel from './agent/StepPanel'
 import { PRESETS, type Preset } from './agent/presets'
 import type { AgentEvent } from './agent/types'
 import { downloadTrace, loadTrace, useAgentRun, type Mode } from './agent/useAgentRun'
+import { useTheme } from './theme'
 
 const EMPTY_WALK: Walk = { visited: new Set(), current: new Set(), pastHops: new Set(), currentHops: new Set(), focus: null }
 
 export default function App() {
-  const { data, load, merge } = useGraph()
+  const { data, load, merge, nodesById } = useGraph()
+  const theme = useTheme()
+  const [activeId, setActiveId] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [walk, setWalk] = useState<Walk>(EMPTY_WALK)
   const [mode, setMode] = useState<Mode>('live')
@@ -60,6 +63,7 @@ export default function App() {
 
   const ask = async (question: string, p?: Preset) => {
     preset.current = p
+    setActiveId(p?.id ?? null)
     if (mode === 'replay' && p) {
       const trace = await loadTrace(p.id)
       if (trace) run.runReplay(trace)
@@ -77,34 +81,47 @@ export default function App() {
   const trace = run.trace
   const canDownload = mode === 'live' && run.status === 'done' && trace !== null
 
+  const lookup = (id: string) => nodesById.current.get(id)
+
   return (
-    <div className="grid h-full grid-cols-[300px_1fr_400px] font-sans">
-      <aside className="overflow-y-auto border-r border-slate-800 p-4">
+    <div className="grid h-full grid-cols-[288px_1fr_400px] bg-canvas font-sans text-ink">
+      <aside className="overflow-hidden border-r border-line bg-sidebar">
         <QuestionPanel
           mode={mode}
           setMode={setMode}
           status={run.status}
           available={available}
+          activeId={activeId}
           onAsk={ask}
           onStop={run.stop}
-          onDownload={
-            canDownload && trace ? () => downloadTrace(trace, preset.current?.id ?? `run-${Date.now()}`) : null
-          }
+          onDownload={canDownload && trace ? () => downloadTrace(trace, preset.current?.id ?? `run-${Date.now()}`) : null}
+          theme={theme.choice}
+          setTheme={theme.setChoice}
         />
       </aside>
 
       <main className="flex min-w-0 flex-col">
-        <div className="flex items-center justify-between gap-4 border-b border-slate-800 px-4 py-2">
+        <div className="flex items-center justify-between gap-4 border-b border-line px-5 py-2.5">
           <Legend counts={counts} />
-          {run.question && <span className="truncate text-xs text-slate-400">“{run.question}”</span>}
         </div>
         <div className="min-h-0 flex-1">
-          {error ? <p className="p-6 text-sm text-red-400">{error}</p> : <GraphView data={data} walk={walk} />}
+          {error ? (
+            <p className="p-6 text-sm text-bad">{error}</p>
+          ) : (
+            <GraphView data={data} walk={walk} theme={theme.resolved} />
+          )}
         </div>
       </main>
 
-      <aside className="overflow-y-auto border-l border-slate-800 p-4">
-        <StepPanel events={run.events} status={run.status} startedAt={run.startedAt} mode={mode} />
+      <aside className="overflow-y-auto border-l border-line bg-canvas px-4 py-4">
+        <StepPanel
+          events={run.events}
+          status={run.status}
+          startedAt={run.startedAt}
+          mode={mode}
+          question={run.question}
+          lookup={lookup}
+        />
       </aside>
     </div>
   )

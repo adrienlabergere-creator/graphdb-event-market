@@ -19,7 +19,7 @@ export function applyTimelineLayout(nodes: GNode[]) {
   spread(by('TradingDay'), ROW.TradingDay)
   spread(by('PriceSeries'), ROW.PriceSeries, WIDTH * 0.7)
   spread([...by('Commodity'), ...by('Currency')], ROW.Commodity, WIDTH * 0.5)
-  spread(by('Theme'), ROW.Theme, WIDTH * 0.8)
+  spread(by('Theme'), ROW.Theme, WIDTH * 1.1)
   spread(by('Country'), ROW.Country)
 }
 

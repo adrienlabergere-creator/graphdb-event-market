@@ -1,9 +1,97 @@
 @import "tailwindcss";
 
-@theme {
-  --font-sans: "Inter", system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+/* Claude-like palette. Light by default, dark from the system setting or the switch in the sidebar. */
+:root {
+  --canvas: #faf9f5;
+  --sidebar: #f5f4ed;
+  --surface: #ffffff;
+  --hover: rgba(20, 20, 19, 0.05);
+  --line: #e8e6dc;
+  --ink: #141413;
+  --muted: #5e5d59;
+  --faint: #8e8c85;
+  --accent: #c96442;
+  --accent-ink: #ffffff;
+  --accent-soft: rgba(201, 100, 66, 0.1);
+  --ok: #3d7a4f;
+  --ok-soft: rgba(61, 122, 79, 0.1);
+  --warn: #9a6514;
+  --warn-soft: rgba(154, 101, 20, 0.1);
+  --bad: #b5402a;
+  --bad-soft: rgba(181, 64, 42, 0.08);
+  --code: #f0eee6;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --canvas: #262624;
+    --sidebar: #1f1e1d;
+    --surface: #30302e;
+    --hover: rgba(245, 244, 239, 0.06);
+    --line: #3e3d39;
+    --ink: #f5f4ef;
+    --muted: #c2c0b6;
+    --faint: #8f8d85;
+    --accent: #d97757;
+    --accent-ink: #1f1e1d;
+    --accent-soft: rgba(217, 119, 87, 0.14);
+    --ok: #7fb58f;
+    --ok-soft: rgba(127, 181, 143, 0.12);
+    --warn: #d6a454;
+    --warn-soft: rgba(214, 164, 84, 0.12);
+    --bad: #e08a74;
+    --bad-soft: rgba(224, 138, 116, 0.1);
+    --code: #1f1e1d;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --canvas: #262624;
+  --sidebar: #1f1e1d;
+  --surface: #30302e;
+  --hover: rgba(245, 244, 239, 0.06);
+  --line: #3e3d39;
+  --ink: #f5f4ef;
+  --muted: #c2c0b6;
+  --faint: #8f8d85;
+  --accent: #d97757;
+  --accent-ink: #1f1e1d;
+  --accent-soft: rgba(217, 119, 87, 0.14);
+  --ok: #7fb58f;
+  --ok-soft: rgba(127, 181, 143, 0.12);
+  --warn: #d6a454;
+  --warn-soft: rgba(214, 164, 84, 0.12);
+  --bad: #e08a74;
+  --bad-soft: rgba(224, 138, 116, 0.1);
+  --code: #1f1e1d;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --font-serif: "Anthropic Serif", "Source Serif 4", Georgia, serif;
+  --font-sans: "Anthropic Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "Anthropic Mono", "JetBrains Mono", ui-monospace, monospace;
+  --color-canvas: var(--canvas);
+  --color-sidebar: var(--sidebar);
+  --color-surface: var(--surface);
+  --color-hover: var(--hover);
+  --color-line: var(--line);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-soft: var(--accent-soft);
+  --color-ok: var(--ok);
+  --color-ok-soft: var(--ok-soft);
+  --color-warn: var(--warn);
+  --color-warn-soft: var(--warn-soft);
+  --color-bad: var(--bad);
+  --color-bad-soft: var(--bad-soft);
+  --color-code: var(--code);
 }
 
 html, body, #root { height: 100%; overflow: hidden; }
-body { margin: 0; background: #0b0f17; color: #e2e8f0; }
+body { margin: 0; background: var(--canvas); color: var(--ink); -webkit-font-smoothing: antialiased; }

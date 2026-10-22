@@ -2,7 +2,8 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import ForceGraph2D, { type ForceGraphMethods } from 'react-force-graph-2d'
 import { forceX, forceY } from 'd3-force'
 import type { GLink, GNode } from '../types'
-import { COLORS, alwaysLabelled, nodeName, nodeRadius, shortName } from './style'
+import { COLORS, PALETTES, alwaysLabelled, nodeColor, nodeName, nodeRadius, shortName } from './style'
+import type { Resolved } from '../theme'
 import { EVENT_BAND_Y } from './layout'
 import { dayIdOf } from './useGraph'
 
@@ -18,10 +19,10 @@ export interface Walk {
 interface Props {
   data: { nodes: GNode[]; links: GLink[] }
   walk: Walk
+  theme: Resolved
 }
 
 const endId = (end: string | GNode) => (typeof end === 'string' ? end : end.id)
-const HOT = '#fb923c'
 const MAX_ZOOM = 4
 
 // When a step touches many nodes, only a few get a label, so the names stay readable.
@@ -37,7 +38,8 @@ function labelBudget(current: Set<string>, nodes: GNode[]): Set<string> {
   return shown
 }
 
-export default function GraphView({ data, walk }: Props) {
+export default function GraphView({ data, walk, theme }: Props) {
+  const palette = PALETTES[theme]
   const box = useRef<HTMLDivElement>(null)
   const fg = useRef<ForceGraphMethods<GNode, GLink> | undefined>(undefined)
   const firstFit = useRef(true)
@@ -96,7 +98,7 @@ export default function GraphView({ data, walk }: Props) {
         width={size.width}
         height={size.height}
         graphData={data}
-        backgroundColor="#0b0f17"
+        backgroundColor={palette.background}
         nodeId="id"
         cooldownTicks={150}
         autoPauseRedraw={false}
@@ -107,17 +109,17 @@ export default function GraphView({ data, walk }: Props) {
         onNodeHover={(n) => setHover(n)}
         linkColor={(l) => {
           const state = linkState(l)
-          if (state === 'current') return HOT
-          if (state === 'past') return 'rgba(251,146,60,0.45)'
-          if (active) return 'rgba(148,163,184,0.04)'
-          return l.type === 'PRICE_ON' ? 'rgba(34,197,94,0.07)' : 'rgba(148,163,184,0.12)'
+          if (state === 'current') return palette.hot
+          if (state === 'past') return palette.hotPast
+          if (active) return palette.linkDim
+          return l.type === 'PRICE_ON' ? palette.priceLink : palette.link
         }}
         linkWidth={(l) => ({ current: 2.2, past: 1.2, idle: 0.6 })[linkState(l)]}
         linkLineDash={(l) => (l.props.virtual ? [4, 3] : null)}
         linkDirectionalParticles={(l) => (linkState(l) === 'current' ? 3 : 0)}
         linkDirectionalParticleWidth={3.5}
         linkDirectionalParticleSpeed={0.012}
-        linkDirectionalParticleColor={() => '#fde68a'}
+        linkDirectionalParticleColor={() => palette.particle}
         nodeCanvasObject={(node, ctx, scale) => {
           const x = node.x ?? 0
           const y = node.y ?? 0
@@ -129,17 +131,17 @@ export default function GraphView({ data, walk }: Props) {
             const pulse = (Math.sin(performance.now() / 180) + 1) / 2
             ctx.beginPath()
             ctx.arc(x, y, r + 3 + pulse * 4, 0, 2 * Math.PI)
-            ctx.fillStyle = `rgba(251,146,60,${0.18 + pulse * 0.2})`
+            ctx.fillStyle = `rgba(${palette.halo},${0.16 + pulse * 0.2})`
             ctx.fill()
           }
           ctx.beginPath()
           ctx.arc(x, y, current ? r * 1.4 : r, 0, 2 * Math.PI)
-          ctx.fillStyle = COLORS[node.label]
+          ctx.fillStyle = nodeColor(node, palette)
           ctx.globalAlpha = active && !visited ? (node.label === 'Event' ? 0.12 : 0.3) : node.label === 'Event' ? 0.8 : 1
           ctx.fill()
           if (visited) {
             ctx.lineWidth = 1.2 / scale
-            ctx.strokeStyle = current ? '#fde68a' : HOT
+            ctx.strokeStyle = current ? palette.particle : palette.hot
             ctx.stroke()
           }
           ctx.globalAlpha = 1
@@ -147,10 +149,10 @@ export default function GraphView({ data, walk }: Props) {
           const showFull = node === hover || labelled.has(node.id) || (visited && !current && node.label !== 'Event' && node.label !== 'TradingDay')
           if (alwaysLabelled(node) || showFull) {
             const fontSize = Math.max((current ? 12 : 10) / scale, 2)
-            ctx.font = `${current ? 600 : 400} ${fontSize}px Inter, sans-serif`
+            ctx.font = `${current ? 600 : 400} ${fontSize}px ui-sans-serif, system-ui, -apple-system, sans-serif`
             ctx.textAlign = 'center'
             ctx.textBaseline = 'top'
-            ctx.fillStyle = current ? '#fde68a' : active && !visited ? 'rgba(203,213,225,0.35)' : '#cbd5e1'
+            ctx.fillStyle = current ? palette.hot : active && !visited ? palette.labelDim : palette.label
             ctx.fillText(showFull ? nodeName(node) : shortName(node), x, y + r + 3 / scale)
           }
         }}
@@ -162,13 +164,13 @@ export default function GraphView({ data, walk }: Props) {
         }}
       />
       {hover && (
-        <div className="pointer-events-none absolute left-3 top-3 max-w-sm rounded-md border border-slate-700 bg-slate-900/90 px-3 py-2 text-xs">
+        <div className="pointer-events-none absolute left-3 top-3 max-w-sm rounded-xl border border-line bg-surface/95 px-3 py-2 text-xs shadow-sm">
           <div className="font-medium" style={{ color: COLORS[hover.label] }}>
             {hover.label}
           </div>
-          <div className="text-slate-200">{nodeName(hover)}</div>
-          <div className="font-mono text-slate-500">{hover.key}</div>
-          <div className="mt-1 text-slate-500">
+          <div className="font-serif text-sm text-ink">{nodeName(hover)}</div>
+          <div className="font-mono text-faint">{hover.key}</div>
+          <div className="mt-1 text-muted">
             {data.links.filter((l) => endId(l.source) === hover.id || endId(l.target) === hover.id).length} edges on
             screen
           </div>
