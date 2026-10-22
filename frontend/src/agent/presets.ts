@@ -9,13 +9,13 @@ export const PRESETS: Preset[] = [
   { id: 'vix-june', question: 'Why did the VIX move in June?', shows: 'explain_move: Event → Day → Series paths' },
   {
     id: 'brent-themes',
-    question: 'Which event theme is most correlated with Brent, and how strong is the correlation?',
+    question: 'How are Fight events (CAMEO_19) correlated with the Brent oil price?',
     shows: 'correlation: Theme ↔ Series',
   },
   {
     id: 'iran-march',
-    question: 'How many events took place in Iran (IRN) in March 2026?',
-    shows: 'graph_query: a verified fact',
+    question: 'Which 5 events in Iran (IRN) were the most mentioned?',
+    shows: 'graph_query: verified facts from the graph',
   },
   {
     id: 'us10y-fed',

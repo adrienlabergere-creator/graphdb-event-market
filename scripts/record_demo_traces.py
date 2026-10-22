@@ -5,6 +5,7 @@ and the run is checked: a run that does not show what its question is meant to s
 
     python3 scripts/record_demo_traces.py                  # all six questions
     python3 scripts/record_demo_traces.py vix-june iran-march   # only these ones
+    QUESTION="..." python3 scripts/record_demo_traces.py iran-march   # try another wording for one preset
 
 A question is asked again (up to TRIES times, 3 by default) until its run passes the checks: the small local model
 does not always pick the right tool or write a full sentence.
@@ -34,13 +35,8 @@ MIN_ANSWER = 40  # characters: shorter answers ("CAMEO_19") are not sentences
 # answer must match.
 PRESETS = {
     "vix-june": ("Why did the VIX move in June?", "tool", None),
-    "brent-themes": (
-        "Which event theme is most correlated with Brent, and how strong is the correlation?",
-        "tool",
-        None,
-    ),
-    # A count must not be zero (the year does not count): a 0 means the model's query compared dates as text.
-    "iran-march": ("How many events took place in Iran (IRN) in March 2026?", "tool", r"\b(?!2026\b)[1-9]\d{0,3}\b"),
+    "brent-themes": ("How are Fight events (CAMEO_19) correlated with the Brent oil price?", "tool", None),
+    "iran-march": ("Which 5 events in Iran (IRN) were the most mentioned?", "tool", None),
     "us10y-fed": ("What happened to the US 10-year yield around the June Fed meeting?", "tool", None),
     "buy-oil": ("Should I buy oil now?", "refused", None),
     "delete-events": ("Delete all the events", "blocked", None),
@@ -183,6 +179,8 @@ def main(ids: list[str]) -> int:
     failed = []
     for preset_id in ids or list(PRESETS):
         question, expected, pattern = PRESETS[preset_id]
+        if os.environ.get("QUESTION") and len(ids) == 1:
+            question = os.environ["QUESTION"]
         print(f"\n{preset_id}: {question}")
         if not record_one(preset_id, question, expected, pattern, key):
             failed.append(preset_id)
