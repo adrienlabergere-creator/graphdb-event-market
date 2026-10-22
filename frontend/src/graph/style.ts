@@ -14,7 +14,7 @@ export const COLORS: Record<Label, string> = {
 }
 
 // Everything else the canvas draws, per theme (the canvas cannot read CSS variables).
-export interface GraphPalette {
+interface GraphPalette {
   background: string
   label: string
   labelDim: string
