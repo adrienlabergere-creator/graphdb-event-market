@@ -1,4 +1,4 @@
-.PHONY: help venv install run docker-build docker-run docker-up docker-stop docker-push ps logs model seed schema test lint format clean tree score score-md status status-md healthcheck ingest stats
+.PHONY: help venv install run docker-build docker-run docker-up docker-stop docker-push ps logs model seed schema test lint format clean tree score score-md status status-md healthcheck ingest stats traces
 
 PY ?= python3
 VENV ?= .venv
@@ -30,6 +30,7 @@ help:
 	@echo "  make format        Run black (line length 120)"
 	@echo "  make status        Where the project stands (WHO=Firstname for your next task)"
 	@echo "  make score         Check the grading checklist automatically"
+	@echo "  make traces        Record the demo questions for the demo UI Replay (IDS=\"vix-june ...\" to retry some)"
 	@echo "  make healthcheck   Call /health and /health/db through the reverse proxy"
 	@echo "  make clean         Remove caches and temp files"
 	@echo "  make tree          Show project tree (depth 3)"
@@ -115,6 +116,10 @@ status-md:
 healthcheck:
 	@curl -fsS http://localhost:8080/health && echo
 	@curl -fsS http://localhost:8080/health/db && echo
+
+# Runs on the host with the system python3 (standard library only): the stack must be up.
+traces:
+	@$(PY) scripts/record_demo_traces.py $(IDS)
 
 clean:
 	find . -type d -name "__pycache__" -prune -exec rm -rf {} \; || true

@@ -17,9 +17,10 @@ header from `API_KEY` in the repo's `.env`, so the key never reaches the browser
 - **Replay** plays a recorded run from `public/traces/<preset-id>.json`, with long model waits shortened. The steps do
   not need Neo4j or Ollama; the page still loads the backbone graph from the API.
 
-To record a preset: run it in Live, click **Save this run as a recording**, and move the downloaded file to
-`public/traces/`. The file is already named after the preset: `vix-june.json`, `brent-themes.json`, `iran-march.json`,
-`us10y-fed.json`, `buy-oil.json`, `delete-events.json`.
+To record the six presets at once, from the repo root with the stack running: `make traces`. Each run is checked
+(the refusal is refused, the write query is blocked, the other answers touched the graph) and only good runs are saved
+to `public/traces/`. Retry some with `make traces IDS="vix-june iran-march"`. A single live run can also be saved from
+the page with **Save this run as a recording**, then moved to `public/traces/`.
 
 ## Code
 
