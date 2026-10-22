@@ -76,8 +76,8 @@ def test_read_only_endpoints_stay_public(client):
         app.dependency_overrides.clear()
 
 
-def test_swagger_declares_the_key_on_ask_only(client):
-    """OpenAPI declares the X-API-Key scheme (Authorize button) and requires it on POST /api/ask only."""
+def test_swagger_declares_the_key_on_the_agent_only(client):
+    """OpenAPI declares the X-API-Key scheme (Authorize button) and requires it only on the two agent endpoints."""
     schema = client.get("/openapi.json").json()
     scheme = schema["components"]["securitySchemes"]["APIKeyHeader"]
     assert scheme == {**scheme, "type": "apiKey", "in": "header", "name": "X-API-Key"}
@@ -87,4 +87,4 @@ def test_swagger_declares_the_key_on_ask_only(client):
         for method, operation in operations.items()
         if operation.get("security")
     ]
-    assert secured == [("/api/ask", "post")]
+    assert sorted(secured) == [("/api/ask", "post"), ("/api/demo/ask/stream", "post")]

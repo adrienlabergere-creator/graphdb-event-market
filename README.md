@@ -75,6 +75,20 @@ Every correlation or explanation carries `"status": "hypothesis"` and a `disclai
 
 Error codes: 401 for a missing or wrong API key, 404 for an unknown series, theme or event, 413 for a request body over 16 KB, 422 for an invalid parameter, 429 when the proxy's rate limit is hit (20 requests per second, 10 per minute on `/api/ask`), 503 when Neo4j, the GDS plugin or the model runtime cannot be reached or when the server has no `API_KEY`.
 
+## Demo UI
+
+A React page (`frontend/`) shows the graph as a timeline (market above, trading days in the middle, events, themes and
+countries below) and the agent walking through it: each LangGraph step appears as it happens, the nodes a tool touches
+light up and the edges it walks are animated. With the stack running:
+
+```bash
+cd frontend && npm install && npm run dev     # http://localhost:5173
+```
+
+**Live** streams the agent through `POST /api/demo/ask/stream` (Server-Sent Events, API key added by the dev server from
+`.env`); **Replay** plays recorded runs from `frontend/public/traces/`. Backbone of the drawing: `GET /api/demo/graph`.
+Details: [frontend/README.md](frontend/README.md).
+
 ## Screenshots
 
 Swagger through the reverse proxy: the **Authorize** button and the lock on `POST /api/ask`, the only endpoint that needs the API key.
