@@ -1,0 +1,806 @@
+{
+ "question": "What happened to the US 10-year yield around the June Fed meeting?",
+ "recorded_at": "2026-10-22T18:16:29.345917+00:00",
+ "events": [
+  {
+   "type": "start",
+   "data": {
+    "question": "What happened to the US 10-year yield around the June Fed meeting?"
+   },
+   "t": 59
+  },
+  {
+   "type": "parse",
+   "data": {
+    "refused": false,
+    "warnings": []
+   },
+   "t": 67
+  },
+  {
+   "type": "plan",
+   "data": {
+    "step": 1,
+    "tool": "explain_move",
+    "arguments": {
+     "series_id": "US10Y",
+     "window": 90
+    },
+    "warnings": []
+   },
+   "t": 1369
+  },
+  {
+   "type": "tool",
+   "data": {
+    "step": 1,
+    "tool": "explain_move",
+    "arguments": {
+     "series_id": "US10Y",
+     "window": 90
+    },
+    "duration_ms": 271,
+    "ok": true,
+    "error": null,
+    "summary": "largest move 12.0% on 2026-05-15, 5 candidate events",
+    "cypher": [],
+    "result": {
+     "asset": "US10Y",
+     "move_pct": 12.0,
+     "move_day": "2026-05-15",
+     "candidates": [
+      {
+       "event_id": "GDELT-1303773259",
+       "title": "UNITED STATES: fight (South Carolina, United States)",
+       "score": 1.0,
+       "path": [
+        "GDELT-1303773259",
+        "2026-05-13",
+        "US10Y"
+       ]
+      },
+      {
+       "event_id": "GDELT-1304093841",
+       "title": "HAWAIIAN / UNITED STATES: coerce (Hawaii, United States)",
+       "score": 0.965,
+       "path": [
+        "GDELT-1304093841",
+        "2026-05-14",
+        "US10Y"
+       ]
+      },
+      {
+       "event_id": "GDELT-1303894047",
+       "title": "SOUTH CAROLINA: coerce (South Carolina, United States)",
+       "score": 0.909,
+       "path": [
+        "GDELT-1303894047",
+        "2026-05-13",
+        "US10Y"
+       ]
+      },
+      {
+       "event_id": "GDELT-1303774904",
+       "title": "UNITED STATES: coerce (South Carolina, United States)",
+       "score": 0.866,
+       "path": [
+        "GDELT-1303774904",
+        "2026-05-13",
+        "US10Y"
+       ]
+      },
+      {
+       "event_id": "GDELT-1303787822",
+       "title": "UNITED STATES: fight (Utah, United States)",
+       "score": 0.734,
+       "path": [
+        "GDELT-1303787822",
+        "2026-05-13",
+        "US10Y"
+       ]
+      }
+     ]
+    },
+    "nodes": [
+     {
+      "id": "Event:GDELT-1303773259",
+      "label": "Event",
+      "key": "GDELT-1303773259",
+      "props": {
+       "date": "2026-05-13",
+       "num_mentions": 2375,
+       "goldstein": -10.0,
+       "event_id": "GDELT-1303773259",
+       "avg_tone": -8.31431835354305,
+       "title": "UNITED STATES: fight (South Carolina, United States)",
+       "cameo_code": "190",
+       "source_url": "https://www.wrhi.com/2026/05/sled-charges-three-chester-county-residents-in-fatal-may-3-drive-by-shooting-212611"
+      }
+     },
+     {
+      "id": "Event:GDELT-1303774904",
+      "label": "Event",
+      "key": "GDELT-1303774904",
+      "props": {
+       "date": "2026-05-13",
+       "num_mentions": 2057,
+       "goldstein": -5.0,
+       "event_id": "GDELT-1303774904",
+       "avg_tone": -9.12190290838791,
+       "title": "UNITED STATES: coerce (South Carolina, United States)",
+       "cameo_code": "173",
+       "source_url": "https://www.wrhi.com/2026/05/sled-charges-three-chester-county-residents-in-fatal-may-3-drive-by-shooting-212611"
+      }
+     },
+     {
+      "id": "Event:GDELT-1303787822",
+      "label": "Event",
+      "key": "GDELT-1303787822",
+      "props": {
+       "date": "2026-05-13",
+       "num_mentions": 1743,
+       "goldstein": -10.0,
+       "event_id": "GDELT-1303787822",
+       "avg_tone": -9.00286082003144,
+       "title": "UNITED STATES: fight (Utah, United States)",
+       "cameo_code": "190",
+       "source_url": "https://www.ksl.com:443/article/51496520/denver-airport-security-missed-trespasser-who-was-killed-by-plane-on-runway"
+      }
+     },
+     {
+      "id": "Event:GDELT-1303894047",
+      "label": "Event",
+      "key": "GDELT-1303894047",
+      "props": {
+       "date": "2026-05-13",
+       "num_mentions": 2160,
+       "goldstein": -5.0,
+       "event_id": "GDELT-1303894047",
+       "avg_tone": -9.72012507493069,
+       "title": "SOUTH CAROLINA: coerce (South Carolina, United States)",
+       "cameo_code": "173",
+       "source_url": "https://www.wral.com/news/ap/65a2e-south-carolina-supreme-court-overturns-alex-murdaugh-s-murder-convictions-in-deaths-of-wife-and-son/"
+      }
+     },
+     {
+      "id": "Event:GDELT-1304093841",
+      "label": "Event",
+      "key": "GDELT-1304093841",
+      "props": {
+       "date": "2026-05-14",
+       "num_mentions": 2292,
+       "goldstein": -5.0,
+       "event_id": "GDELT-1304093841",
+       "avg_tone": -5.51199705406774,
+       "title": "HAWAIIAN / UNITED STATES: coerce (Hawaii, United States)",
+       "cameo_code": "173",
+       "source_url": "https://kiss108.iheart.com/content/2026-05-14-tourist-arrested-for-allegedly-throwing-rocks-at-a-hawaiian-monk-seal/"
+      }
+     },
+     {
+      "id": "TradingDay:2026-05-13",
+      "label": "TradingDay",
+      "key": "2026-05-13",
+      "props": {
+       "date": "2026-05-13",
+       "event_count": 25,
+       "is_trading_day": true
+      }
+     },
+     {
+      "id": "TradingDay:2026-05-14",
+      "label": "TradingDay",
+      "key": "2026-05-14",
+      "props": {
+       "date": "2026-05-14",
+       "event_count": 25,
+       "is_trading_day": true
+      }
+     },
+     {
+      "id": "TradingDay:2026-05-15",
+      "label": "TradingDay",
+      "key": "2026-05-15",
+      "props": {
+       "date": "2026-05-15",
+       "event_count": 25,
+       "is_trading_day": true
+      }
+     },
+     {
+      "id": "PriceSeries:US10Y",
+      "label": "PriceSeries",
+      "key": "US10Y",
+      "props": {
+       "unit": "percent",
+       "ticker": "DGS10",
+       "kind": "rate",
+       "name": "US Treasury 10-year yield",
+       "source": "FRED",
+       "series_id": "US10Y"
+      }
+     }
+    ],
+    "edges": [
+     {
+      "source": "Event:GDELT-1303773259",
+      "type": "OCCURRED_IN",
+      "target": "Country:USA",
+      "props": {}
+     },
+     {
+      "source": "Event:GDELT-1303773259",
+      "type": "ON_DAY",
+      "target": "TradingDay:2026-05-13",
+      "props": {}
+     },
+     {
+      "source": "Event:GDELT-1303773259",
+      "type": "HAS_THEME",
+      "target": "Theme:CAMEO_19",
+      "props": {}
+     },
+     {
+      "source": "Event:GDELT-1303774904",
+      "type": "ON_DAY",
+      "target": "TradingDay:2026-05-13",
+      "props": {}
+     },
+     {
+      "source": "Event:GDELT-1303774904",
+      "type": "OCCURRED_IN",
+      "target": "Country:USA",
+      "props": {}
+     },
+     {
+      "source": "Event:GDELT-1303774904",
+      "type": "HAS_THEME",
+      "target": "Theme:CAMEO_17",
+      "props": {}
+     },
+     {
+      "source": "Event:GDELT-1303787822",
+      "type": "OCCURRED_IN",
+      "target": "Country:USA",
+      "props": {}
+     },
+     {
+      "source": "Event:GDELT-1303787822",
+      "type": "HAS_THEME",
+      "target": "Theme:CAMEO_19",
+      "props": {}
+     },
+     {
+      "source": "Event:GDELT-1303787822",
+      "type": "ON_DAY",
+      "target": "TradingDay:2026-05-13",
+      "props": {}
+     },
+     {
+      "source": "Event:GDELT-1303894047",
+      "type": "OCCURRED_IN",
+      "target": "Country:USA",
+      "props": {}
+     },
+     {
+      "source": "Event:GDELT-1303894047",
+      "type": "HAS_THEME",
+      "target": "Theme:CAMEO_17",
+      "props": {}
+     },
+     {
+      "source": "Event:GDELT-1303894047",
+      "type": "ON_DAY",
+      "target": "TradingDay:2026-05-13",
+      "props": {}
+     },
+     {
+      "source": "Event:GDELT-1304093841",
+      "type": "OCCURRED_IN",
+      "target": "Country:USA",
+      "props": {}
+     },
+     {
+      "source": "Event:GDELT-1304093841",
+      "type": "HAS_THEME",
+      "target": "Theme:CAMEO_17",
+      "props": {}
+     },
+     {
+      "source": "Event:GDELT-1304093841",
+      "type": "ON_DAY",
+      "target": "TradingDay:2026-05-14",
+      "props": {}
+     }
+    ],
+    "hops": [
+     {
+      "source": "Event:GDELT-1303773259",
+      "type": "ON_DAY",
+      "target": "TradingDay:2026-05-13",
+      "props": {}
+     },
+     {
+      "source": "Event:GDELT-1303774904",
+      "type": "ON_DAY",
+      "target": "TradingDay:2026-05-13",
+      "props": {}
+     },
+     {
+      "source": "Event:GDELT-1303787822",
+      "type": "ON_DAY",
+      "target": "TradingDay:2026-05-13",
+      "props": {}
+     },
+     {
+      "source": "Event:GDELT-1303894047",
+      "type": "ON_DAY",
+      "target": "TradingDay:2026-05-13",
+      "props": {}
+     },
+     {
+      "source": "Event:GDELT-1304093841",
+      "type": "ON_DAY",
+      "target": "TradingDay:2026-05-14",
+      "props": {}
+     },
+     {
+      "source": "PriceSeries:US10Y",
+      "type": "PRICE_ON",
+      "target": "TradingDay:2026-05-15",
+      "props": {
+       "ret_1d": 0.1200000000000001,
+       "close": 4.59
+      }
+     },
+     {
+      "source": "PriceSeries:US10Y",
+      "type": "PRICE_ON",
+      "target": "TradingDay:2026-05-14",
+      "props": {
+       "ret_1d": 0.009999999999999787,
+       "close": 4.47
+      }
+     },
+     {
+      "source": "PriceSeries:US10Y",
+      "type": "PRICE_ON",
+      "target": "TradingDay:2026-05-13",
+      "props": {
+       "ret_1d": 0.0,
+       "close": 4.46
+      }
+     }
+    ]
+   },
+   "t": 1701
+  },
+  {
+   "type": "plan",
+   "data": {
+    "step": 2,
+    "tool": "explain_move",
+    "arguments": {
+     "series_id": "US10Y",
+     "window": 90
+    },
+    "warnings": []
+   },
+   "t": 3499
+  },
+  {
+   "type": "tool",
+   "data": {
+    "step": 2,
+    "tool": "explain_move",
+    "arguments": {
+     "series_id": "US10Y",
+     "window": 90
+    },
+    "duration_ms": 103,
+    "ok": true,
+    "error": null,
+    "summary": "largest move 12.0% on 2026-05-15, 5 candidate events",
+    "cypher": [],
+    "result": {
+     "asset": "US10Y",
+     "move_pct": 12.0,
+     "move_day": "2026-05-15",
+     "candidates": [
+      {
+       "event_id": "GDELT-1303773259",
+       "title": "UNITED STATES: fight (South Carolina, United States)",
+       "score": 1.0,
+       "path": [
+        "GDELT-1303773259",
+        "2026-05-13",
+        "US10Y"
+       ]
+      },
+      {
+       "event_id": "GDELT-1304093841",
+       "title": "HAWAIIAN / UNITED STATES: coerce (Hawaii, United States)",
+       "score": 0.965,
+       "path": [
+        "GDELT-1304093841",
+        "2026-05-14",
+        "US10Y"
+       ]
+      },
+      {
+       "event_id": "GDELT-1303894047",
+       "title": "SOUTH CAROLINA: coerce (South Carolina, United States)",
+       "score": 0.909,
+       "path": [
+        "GDELT-1303894047",
+        "2026-05-13",
+        "US10Y"
+       ]
+      },
+      {
+       "event_id": "GDELT-1303774904",
+       "title": "UNITED STATES: coerce (South Carolina, United States)",
+       "score": 0.866,
+       "path": [
+        "GDELT-1303774904",
+        "2026-05-13",
+        "US10Y"
+       ]
+      },
+      {
+       "event_id": "GDELT-1303787822",
+       "title": "UNITED STATES: fight (Utah, United States)",
+       "score": 0.734,
+       "path": [
+        "GDELT-1303787822",
+        "2026-05-13",
+        "US10Y"
+       ]
+      }
+     ]
+    },
+    "nodes": [
+     {
+      "id": "Event:GDELT-1303773259",
+      "label": "Event",
+      "key": "GDELT-1303773259",
+      "props": {
+       "date": "2026-05-13",
+       "num_mentions": 2375,
+       "goldstein": -10.0,
+       "event_id": "GDELT-1303773259",
+       "avg_tone": -8.31431835354305,
+       "title": "UNITED STATES: fight (South Carolina, United States)",
+       "cameo_code": "190",
+       "source_url": "https://www.wrhi.com/2026/05/sled-charges-three-chester-county-residents-in-fatal-may-3-drive-by-shooting-212611"
+      }
+     },
+     {
+      "id": "Event:GDELT-1303774904",
+      "label": "Event",
+      "key": "GDELT-1303774904",
+      "props": {
+       "date": "2026-05-13",
+       "num_mentions": 2057,
+       "goldstein": -5.0,
+       "event_id": "GDELT-1303774904",
+       "avg_tone": -9.12190290838791,
+       "title": "UNITED STATES: coerce (South Carolina, United States)",
+       "cameo_code": "173",
+       "source_url": "https://www.wrhi.com/2026/05/sled-charges-three-chester-county-residents-in-fatal-may-3-drive-by-shooting-212611"
+      }
+     },
+     {
+      "id": "Event:GDELT-1303787822",
+      "label": "Event",
+      "key": "GDELT-1303787822",
+      "props": {
+       "date": "2026-05-13",
+       "num_mentions": 1743,
+       "goldstein": -10.0,
+       "event_id": "GDELT-1303787822",
+       "avg_tone": -9.00286082003144,
+       "title": "UNITED STATES: fight (Utah, United States)",
+       "cameo_code": "190",
+       "source_url": "https://www.ksl.com:443/article/51496520/denver-airport-security-missed-trespasser-who-was-killed-by-plane-on-runway"
+      }
+     },
+     {
+      "id": "Event:GDELT-1303894047",
+      "label": "Event",
+      "key": "GDELT-1303894047",
+      "props": {
+       "date": "2026-05-13",
+       "num_mentions": 2160,
+       "goldstein": -5.0,
+       "event_id": "GDELT-1303894047",
+       "avg_tone": -9.72012507493069,
+       "title": "SOUTH CAROLINA: coerce (South Carolina, United States)",
+       "cameo_code": "173",
+       "source_url": "https://www.wral.com/news/ap/65a2e-south-carolina-supreme-court-overturns-alex-murdaugh-s-murder-convictions-in-deaths-of-wife-and-son/"
+      }
+     },
+     {
+      "id": "Event:GDELT-1304093841",
+      "label": "Event",
+      "key": "GDELT-1304093841",
+      "props": {
+       "date": "2026-05-14",
+       "num_mentions": 2292,
+       "goldstein": -5.0,
+       "event_id": "GDELT-1304093841",
+       "avg_tone": -5.51199705406774,
+       "title": "HAWAIIAN / UNITED STATES: coerce (Hawaii, United States)",
+       "cameo_code": "173",
+       "source_url": "https://kiss108.iheart.com/content/2026-05-14-tourist-arrested-for-allegedly-throwing-rocks-at-a-hawaiian-monk-seal/"
+      }
+     },
+     {
+      "id": "TradingDay:2026-05-13",
+      "label": "TradingDay",
+      "key": "2026-05-13",
+      "props": {
+       "date": "2026-05-13",
+       "event_count": 25,
+       "is_trading_day": true
+      }
+     },
+     {
+      "id": "TradingDay:2026-05-14",
+      "label": "TradingDay",
+      "key": "2026-05-14",
+      "props": {
+       "date": "2026-05-14",
+       "event_count": 25,
+       "is_trading_day": true
+      }
+     },
+     {
+      "id": "TradingDay:2026-05-15",
+      "label": "TradingDay",
+      "key": "2026-05-15",
+      "props": {
+       "date": "2026-05-15",
+       "event_count": 25,
+       "is_trading_day": true
+      }
+     },
+     {
+      "id": "PriceSeries:US10Y",
+      "label": "PriceSeries",
+      "key": "US10Y",
+      "props": {
+       "unit": "percent",
+       "ticker": "DGS10",
+       "kind": "rate",
+       "name": "US Treasury 10-year yield",
+       "source": "FRED",
+       "series_id": "US10Y"
+      }
+     }
+    ],
+    "edges": [
+     {
+      "source": "Event:GDELT-1303773259",
+      "type": "OCCURRED_IN",
+      "target": "Country:USA",
+      "props": {}
+     },
+     {
+      "source": "Event:GDELT-1303773259",
+      "type": "ON_DAY",
+      "target": "TradingDay:2026-05-13",
+      "props": {}
+     },
+     {
+      "source": "Event:GDELT-1303773259",
+      "type": "HAS_THEME",
+      "target": "Theme:CAMEO_19",
+      "props": {}
+     },
+     {
+      "source": "Event:GDELT-1303774904",
+      "type": "ON_DAY",
+      "target": "TradingDay:2026-05-13",
+      "props": {}
+     },
+     {
+      "source": "Event:GDELT-1303774904",
+      "type": "OCCURRED_IN",
+      "target": "Country:USA",
+      "props": {}
+     },
+     {
+      "source": "Event:GDELT-1303774904",
+      "type": "HAS_THEME",
+      "target": "Theme:CAMEO_17",
+      "props": {}
+     },
+     {
+      "source": "Event:GDELT-1303787822",
+      "type": "OCCURRED_IN",
+      "target": "Country:USA",
+      "props": {}
+     },
+     {
+      "source": "Event:GDELT-1303787822",
+      "type": "HAS_THEME",
+      "target": "Theme:CAMEO_19",
+      "props": {}
+     },
+     {
+      "source": "Event:GDELT-1303787822",
+      "type": "ON_DAY",
+      "target": "TradingDay:2026-05-13",
+      "props": {}
+     },
+     {
+      "source": "Event:GDELT-1303894047",
+      "type": "OCCURRED_IN",
+      "target": "Country:USA",
+      "props": {}
+     },
+     {
+      "source": "Event:GDELT-1303894047",
+      "type": "HAS_THEME",
+      "target": "Theme:CAMEO_17",
+      "props": {}
+     },
+     {
+      "source": "Event:GDELT-1303894047",
+      "type": "ON_DAY",
+      "target": "TradingDay:2026-05-13",
+      "props": {}
+     },
+     {
+      "source": "Event:GDELT-1304093841",
+      "type": "OCCURRED_IN",
+      "target": "Country:USA",
+      "props": {}
+     },
+     {
+      "source": "Event:GDELT-1304093841",
+      "type": "HAS_THEME",
+      "target": "Theme:CAMEO_17",
+      "props": {}
+     },
+     {
+      "source": "Event:GDELT-1304093841",
+      "type": "ON_DAY",
+      "target": "TradingDay:2026-05-14",
+      "props": {}
+     }
+    ],
+    "hops": [
+     {
+      "source": "Event:GDELT-1303773259",
+      "type": "ON_DAY",
+      "target": "TradingDay:2026-05-13",
+      "props": {}
+     },
+     {
+      "source": "Event:GDELT-1303774904",
+      "type": "ON_DAY",
+      "target": "TradingDay:2026-05-13",
+      "props": {}
+     },
+     {
+      "source": "Event:GDELT-1303787822",
+      "type": "ON_DAY",
+      "target": "TradingDay:2026-05-13",
+      "props": {}
+     },
+     {
+      "source": "Event:GDELT-1303894047",
+      "type": "ON_DAY",
+      "target": "TradingDay:2026-05-13",
+      "props": {}
+     },
+     {
+      "source": "Event:GDELT-1304093841",
+      "type": "ON_DAY",
+      "target": "TradingDay:2026-05-14",
+      "props": {}
+     },
+     {
+      "source": "PriceSeries:US10Y",
+      "type": "PRICE_ON",
+      "target": "TradingDay:2026-05-15",
+      "props": {
+       "ret_1d": 0.1200000000000001,
+       "close": 4.59
+      }
+     },
+     {
+      "source": "PriceSeries:US10Y",
+      "type": "PRICE_ON",
+      "target": "TradingDay:2026-05-14",
+      "props": {
+       "ret_1d": 0.009999999999999787,
+       "close": 4.47
+      }
+     },
+     {
+      "source": "PriceSeries:US10Y",
+      "type": "PRICE_ON",
+      "target": "TradingDay:2026-05-13",
+      "props": {
+       "ret_1d": 0.0,
+       "close": 4.46
+      }
+     }
+    ]
+   },
+   "t": 3629
+  },
+  {
+   "type": "validate",
+   "data": {
+    "warnings": []
+   },
+   "t": 6896
+  },
+  {
+   "type": "answer",
+   "data": {
+    "answer": "The US 10-year yield followed a fight in South Carolina around June 13, 2026, with a confidence of 0.9.",
+    "status": "hypothesis",
+    "confidence": 0.9,
+    "tool_calls": [
+     {
+      "name": "explain_move",
+      "arguments": {
+       "series_id": "US10Y",
+       "window": 90
+      },
+      "duration_ms": 271
+     },
+     {
+      "name": "explain_move",
+      "arguments": {
+       "series_id": "US10Y",
+       "window": 90
+      },
+      "duration_ms": 103
+     }
+    ],
+    "graph_paths": [
+     [
+      "GDELT-1303773259",
+      "2026-05-13",
+      "US10Y"
+     ],
+     [
+      "GDELT-1304093841",
+      "2026-05-14",
+      "US10Y"
+     ],
+     [
+      "GDELT-1303894047",
+      "2026-05-13",
+      "US10Y"
+     ],
+     [
+      "GDELT-1303774904",
+      "2026-05-13",
+      "US10Y"
+     ],
+     [
+      "GDELT-1303787822",
+      "2026-05-13",
+      "US10Y"
+     ]
+    ],
+    "cypher_used": [],
+    "warnings": [],
+    "disclaimer": "Statistical association measured on a short sample. It is a hypothesis, not a proven cause, and not financial advice."
+   },
+   "t": 6896
+  },
+  {
+   "type": "done",
+   "data": {},
+   "t": 6896
+  }
+ ]
+}
