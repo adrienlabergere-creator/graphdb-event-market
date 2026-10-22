@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-/* Claude-like palette. Light by default, dark from the system setting or the switch in the sidebar. */
+/* Warm neutrals with an indigo accent. Light by default, dark from the system setting or the switch in the sidebar. */
 :root {
   --canvas: #faf9f5;
   --sidebar: #f5f4ed;
@@ -10,9 +10,9 @@
   --ink: #141413;
   --muted: #5e5d59;
   --faint: #8e8c85;
-  --accent: #c96442;
+  --accent: #4c5fd5;
   --accent-ink: #ffffff;
-  --accent-soft: rgba(201, 100, 66, 0.1);
+  --accent-soft: rgba(76, 95, 213, 0.1);
   --ok: #3d7a4f;
   --ok-soft: rgba(61, 122, 79, 0.1);
   --warn: #9a6514;
@@ -33,9 +33,9 @@
     --ink: #f5f4ef;
     --muted: #c2c0b6;
     --faint: #8f8d85;
-    --accent: #d97757;
-    --accent-ink: #1f1e1d;
-    --accent-soft: rgba(217, 119, 87, 0.14);
+    --accent: #8c9bff;
+    --accent-ink: #16171d;
+    --accent-soft: rgba(140, 155, 255, 0.14);
     --ok: #7fb58f;
     --ok-soft: rgba(127, 181, 143, 0.12);
     --warn: #d6a454;
@@ -56,9 +56,9 @@
   --ink: #f5f4ef;
   --muted: #c2c0b6;
   --faint: #8f8d85;
-  --accent: #d97757;
-  --accent-ink: #1f1e1d;
-  --accent-soft: rgba(217, 119, 87, 0.14);
+  --accent: #8c9bff;
+  --accent-ink: #16171d;
+  --accent-soft: rgba(140, 155, 255, 0.14);
   --ok: #7fb58f;
   --ok-soft: rgba(127, 181, 143, 0.12);
   --warn: #d6a454;
@@ -70,9 +70,10 @@
 }
 
 @theme inline {
-  --font-serif: "Anthropic Serif", "Source Serif 4", Georgia, serif;
-  --font-sans: "Anthropic Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-mono: "Anthropic Mono", "JetBrains Mono", ui-monospace, monospace;
+  /* One family everywhere: "font-serif" marks the reading text, set a touch larger by the components. */
+  --font-serif: "Geist", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-sans: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, monospace;
   --color-canvas: var(--canvas);
   --color-sidebar: var(--sidebar);
   --color-surface: var(--surface);
