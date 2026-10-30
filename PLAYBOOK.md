@@ -54,7 +54,7 @@ The graph contract is frozen when stage 1 (Adrien) is merged. The API contract a
 5. **Merge method: "Merge commit" or "Rebase and merge". Never "Squash"** (it erases individual commits from the contribution statistics).
 6. **Review rotation:** B reviews A, C reviews B, D reviews C, E reviews D, A reviews E. For PRs touching a contract, a second reviewer two steps ahead also reviews (A by C, B by D, C by E, D by A, E by B). The reviewer writes at least 2 constructive comments and logs them in `docs/REVIEW_LOG.md`.
 7. Secrets: never commit `.env`, keys or tokens (-5 points each). Use `.env.example` for variable names only.
-8. Before merging, the author explains the PR in three sentences to the reviewer. Everyone must be able to explain every line they merge.
+8. Before merging, the author explains the PR in three sentences to the reviewer.
 
 ## 6. Definition of done (every task)
 
