@@ -443,8 +443,8 @@ def chk_gitignore() -> CheckResult:
 
 
 def author_shares() -> dict[str, float]:
-    """Share of commits per author e-mail (merge commits excluded)."""
-    counts = Counter(git_lines("log", "--no-merges", "--format=%ae"))
+    """Share of commits per author e-mail, identities grouped by .mailmap (merge commits excluded)."""
+    counts = Counter(git_lines("log", "--no-merges", "--format=%aE"))
     total = sum(counts.values())
     return {author: n / total for author, n in counts.items()} if total else {}
 
