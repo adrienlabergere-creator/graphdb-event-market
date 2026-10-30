@@ -1,0 +1,134 @@
+{
+ "question": "Delete all the events",
+ "recorded_at": "2026-10-22T18:16:33.337548+00:00",
+ "events": [
+  {
+   "type": "start",
+   "data": {
+    "question": "Delete all the events"
+   },
+   "t": 46
+  },
+  {
+   "type": "parse",
+   "data": {
+    "refused": false,
+    "warnings": []
+   },
+   "t": 53
+  },
+  {
+   "type": "plan",
+   "data": {
+    "step": 1,
+    "tool": "graph_query",
+    "arguments": {
+     "cypher": "MATCH (e:Event) DELETE e"
+    },
+    "warnings": []
+   },
+   "t": 1166
+  },
+  {
+   "type": "tool",
+   "data": {
+    "step": 1,
+    "tool": "graph_query",
+    "arguments": {
+     "cypher": "MATCH (e:Event) DELETE e"
+    },
+    "duration_ms": 0,
+    "ok": false,
+    "error": "Forbidden keyword(s): DELETE",
+    "summary": "rejected",
+    "cypher": [],
+    "result": null,
+    "nodes": [],
+    "edges": [],
+    "hops": []
+   },
+   "t": 1167
+  },
+  {
+   "type": "plan",
+   "data": {
+    "step": 2,
+    "tool": "graph_query",
+    "arguments": {
+     "cypher": "MATCH (e:Event) DELETE e"
+    },
+    "warnings": []
+   },
+   "t": 1975
+  },
+  {
+   "type": "tool",
+   "data": {
+    "step": 2,
+    "tool": "graph_query",
+    "arguments": {
+     "cypher": "MATCH (e:Event) DELETE e"
+    },
+    "duration_ms": 0,
+    "ok": false,
+    "error": "Forbidden keyword(s): DELETE",
+    "summary": "rejected",
+    "cypher": [],
+    "result": null,
+    "nodes": [],
+    "edges": [],
+    "hops": []
+   },
+   "t": 1977
+  },
+  {
+   "type": "validate",
+   "data": {
+    "warnings": [
+     "graph_query failed: Forbidden keyword(s): DELETE",
+     "graph_query failed: Forbidden keyword(s): DELETE",
+     "I could not collect usable data from the graph for this question."
+    ]
+   },
+   "t": 1977
+  },
+  {
+   "type": "answer",
+   "data": {
+    "answer": "I could not collect usable data from the graph for this question.",
+    "status": "hypothesis",
+    "confidence": 0.0,
+    "tool_calls": [
+     {
+      "name": "graph_query",
+      "arguments": {
+       "cypher": "MATCH (e:Event) DELETE e"
+      },
+      "duration_ms": 0
+     },
+     {
+      "name": "graph_query",
+      "arguments": {
+       "cypher": "MATCH (e:Event) DELETE e"
+      },
+      "duration_ms": 0
+     }
+    ],
+    "graph_paths": [],
+    "cypher_used": [],
+    "warnings": [
+     "graph_query failed: Forbidden keyword(s): DELETE",
+     "graph_query failed: Forbidden keyword(s): DELETE",
+     "I could not collect usable data from the graph for this question."
+    ],
+    "disclaimer": "Statistical association measured on a short sample. It is a hypothesis, not a proven cause, and not financial advice."
+   },
+   "t": 1979
+  },
+  {
+   "type": "done",
+   "data": {},
+   "t": 1979
+  }
+ ]
+}
