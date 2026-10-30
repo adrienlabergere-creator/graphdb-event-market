@@ -4,7 +4,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from neo4j.exceptions import DriverError, Neo4jError
 
-from app.routers import analytics, ask, health
+from app.routers import analytics, ask, demo, health
 
 DESCRIPTION = (
     "Graph-backed API linking geopolitical and economic events to market series. "
@@ -16,6 +16,7 @@ app = FastAPI(title="Event-Market Graph API", version="0.1.0", description=DESCR
 app.include_router(health.router)
 app.include_router(analytics.router)
 app.include_router(ask.router)
+app.include_router(demo.router)
 
 
 @app.exception_handler(DriverError)

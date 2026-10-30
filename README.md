@@ -75,6 +75,25 @@ Every correlation or explanation carries `"status": "hypothesis"` and a `disclai
 
 Error codes: 401 for a missing or wrong API key, 404 for an unknown series, theme or event, 413 for a request body over 16 KB, 422 for an invalid parameter, 429 when the proxy's rate limit is hit (20 requests per second, 10 per minute on `/api/ask`), 503 when Neo4j, the GDS plugin or the model runtime cannot be reached or when the server has no `API_KEY`.
 
+## Demo UI
+
+**Live demo (recorded runs): https://event-market-graph-ten.vercel.app**
+
+A React page (`frontend/`) shows the graph as a timeline (market above, trading days in the middle, events, themes and
+countries below) and the agent walking through it: each LangGraph step appears as it happens, the nodes a tool touches
+light up and the edges it walks are animated. Each answer opens with a short summary built from the tool results (the
+move, its date, the linked events, the model's confidence), worded as an association, never a cause. Light and dark
+themes follow the system setting. With the stack running:
+
+```bash
+cd frontend && npm install && npm run dev     # http://localhost:5173
+```
+
+**Live** streams the agent through `POST /api/demo/ask/stream` (Server-Sent Events, API key added by the dev server from
+`.env`); **Replay** plays recorded runs from `frontend/public/traces/` (`make traces`). The public site is a
+replay-only build with no backend at all (`make snapshot`, then `npm run build:static`): nothing on it can reach the
+API, the model or the database. Details: [frontend/README.md](frontend/README.md).
+
 ## Screenshots
 
 Swagger through the reverse proxy: the **Authorize** button and the lock on `POST /api/ask`, the only endpoint that needs the API key.
@@ -141,6 +160,8 @@ The agent only calls four tools (`graph_query`, `correlation`, `timeline`, `expl
 | `make status` | Where the project stands, next task (`WHO=Firstname`) |
 | `make test` | Runs pytest with coverage |
 | `make lint` | Runs pylint (score at least 9.5) |
+| `make traces` | Records the six demo questions for the demo UI Replay (`IDS="vix-june ..."` for some) |
+| `make snapshot` | Saves the graph backbone for the public, replay-only build of the demo UI |
 | `make clean` | Removes caches |
 
 ## Docker image
