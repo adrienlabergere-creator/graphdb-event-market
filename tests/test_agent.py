@@ -90,9 +90,10 @@ def test_unreachable_model_runtime_is_reported_as_unavailable():
 
 
 def test_a_repeated_tool_call_stops_the_loop():
-    """A plan that repeats an earlier call brings no new information, so the agent stops instead of looping."""
+    """A repeated plan is skipped before another database call and the agent stops."""
     answer = run_agent("Why did Brent move?", FakeSession(MOVE_ROWS), FakeLLM([EXPLAIN, EXPLAIN, EXPLAIN]))
-    assert [c.name for c in answer.tool_calls] == ["explain_move", "explain_move"]
+    assert [c.name for c in answer.tool_calls] == ["explain_move"]
+    assert "Repeated tool call skipped" in answer.warnings
 
 
 def test_graph_paths_are_reported_without_duplicates():

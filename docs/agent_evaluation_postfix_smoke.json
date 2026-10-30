@@ -1,0 +1,107 @@
+{
+  "run_at_utc": "2026-10-18T14:10:58.188376+00:00",
+  "model": "llama3.1:8b",
+  "data_window": "2026-02-01 to 2026-07-31",
+  "cases": [
+    {
+      "name": "iran_events",
+      "question": "How many events happened in Iran in June 2026?",
+      "expected_tool": "graph_query",
+      "expected_status": "verified",
+      "needs_path": false,
+      "answer": {
+        "answer": "97",
+        "status": "verified",
+        "confidence": 1.0,
+        "tool_calls": [
+          {
+            "name": "graph_query",
+            "arguments": {
+              "cypher": "MATCH (e:Event)-[:OCCURRED_IN]->(c:Country {iso3: 'IRN'}) WHERE e.date >= date('2026-06-01') AND e.date < date('2026-07-01') RETURN count(e) AS event_count"
+            },
+            "duration_ms": 89
+          }
+        ],
+        "graph_paths": [],
+        "cypher_used": [
+          "MATCH (e:Event)-[:OCCURRED_IN]->(c:Country {iso3: 'IRN'}) WHERE e.date >= date('2026-06-01') AND e.date < date('2026-07-01') RETURN count(e) AS event_count LIMIT 100"
+        ],
+        "warnings": [
+          "Repeated tool call skipped"
+        ],
+        "disclaimer": "Statistical association measured on a short sample. It is a hypothesis, not a proven cause, and not financial advice."
+      },
+      "expected_tool_used": true,
+      "expected_status_met": true,
+      "path_present": false,
+      "no_causal_wording": true,
+      "plans": [
+        {
+          "tool": "graph_query",
+          "arguments": {
+            "cypher": "MATCH (e:Event)-[:OCCURRED_IN]->(c:Country {iso3: 'IRN'}) WHERE e.date >= date('2026-06-01') AND e.date < date('2026-07-01') RETURN count(e) AS event_count"
+          }
+        },
+        {
+          "tool": "graph_query",
+          "arguments": {
+            "cypher": "MATCH (e:Event)-[:OCCURRED_IN]->(c:Country {iso3: 'IRN'}) WHERE e.date >= date('2026-06-01') AND e.date < date('2026-07-01') RETURN count(e) AS event_count"
+          }
+        }
+      ],
+      "generated_queries": [
+        {
+          "query": "MATCH (e:Event)-[:OCCURRED_IN]->(c:Country {iso3: 'IRN'}) WHERE e.date >= date('2026-06-01') AND e.date < date('2026-07-01') RETURN count(e) AS event_count",
+          "valid": true,
+          "executed_form": "MATCH (e:Event)-[:OCCURRED_IN]->(c:Country {iso3: 'IRN'}) WHERE e.date >= date('2026-06-01') AND e.date < date('2026-07-01') RETURN count(e) AS event_count LIMIT 100"
+        },
+        {
+          "query": "MATCH (e:Event)-[:OCCURRED_IN]->(c:Country {iso3: 'IRN'}) WHERE e.date >= date('2026-06-01') AND e.date < date('2026-07-01') RETURN count(e) AS event_count",
+          "valid": true,
+          "executed_form": "MATCH (e:Event)-[:OCCURRED_IN]->(c:Country {iso3: 'IRN'}) WHERE e.date >= date('2026-06-01') AND e.date < date('2026-07-01') RETURN count(e) AS event_count LIMIT 100"
+        }
+      ],
+      "duration_s": 149.3
+    }
+  ],
+  "unsafe_probes": [
+    {
+      "query": "MATCH (e:Event) DELETE e",
+      "rejected": true,
+      "reason": "Forbidden keyword(s): DELETE"
+    },
+    {
+      "query": "CREATE (:Event {event_id: 'probe'})",
+      "rejected": true,
+      "reason": "The query must start with MATCH, OPTIONAL MATCH, WITH, UNWIND or RETURN"
+    },
+    {
+      "query": "MATCH (e:Event) RETURN e; MATCH (n) DELETE n",
+      "rejected": true,
+      "reason": "Only one statement is allowed"
+    },
+    {
+      "query": "MATCH p = (a:Country)-[*]->(b:Country) RETURN p",
+      "rejected": true,
+      "reason": "Traversal depth must be bounded to 6 or less"
+    },
+    {
+      "query": "MATCH (p:Person) RETURN p",
+      "rejected": true,
+      "reason": "Unknown label: Person"
+    }
+  ],
+  "summary": {
+    "answered": 1,
+    "questions": 1,
+    "expected_tool_used": 1,
+    "expected_status_met": 1,
+    "neutral_wording": 1,
+    "generated_queries_valid": 2,
+    "generated_queries": 2,
+    "unsafe_probes_rejected": 5,
+    "unsafe_probes": 5,
+    "path_cases_with_path": 0,
+    "path_cases_answered": 0
+  }
+}
