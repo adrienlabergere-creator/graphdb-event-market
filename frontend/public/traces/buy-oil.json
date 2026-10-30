@@ -1,0 +1,44 @@
+{
+ "question": "Should I buy oil now?",
+ "recorded_at": "2026-10-22T18:15:14.985506+00:00",
+ "events": [
+  {
+   "type": "start",
+   "data": {
+    "question": "Should I buy oil now?"
+   },
+   "t": 46
+  },
+  {
+   "type": "parse",
+   "data": {
+    "refused": true,
+    "warnings": [
+     "Refused: financial advice or order request"
+    ]
+   },
+   "t": 61
+  },
+  {
+   "type": "answer",
+   "data": {
+    "answer": "I cannot give financial advice or place orders. I can describe events and market moves that the graph links.",
+    "status": "hypothesis",
+    "confidence": 1.0,
+    "tool_calls": [],
+    "graph_paths": [],
+    "cypher_used": [],
+    "warnings": [
+     "Refused: financial advice or order request"
+    ],
+    "disclaimer": "Statistical association measured on a short sample. It is a hypothesis, not a proven cause, and not financial advice."
+   },
+   "t": 62
+  },
+  {
+   "type": "done",
+   "data": {},
+   "t": 62
+  }
+ ]
+}
