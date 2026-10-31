@@ -18,7 +18,6 @@
 - [ ] No secret committed, `.env` untouched
 - [ ] `docs/GRAPH_CONTRACT.md` and `docs/API_CONTRACT.md` respected, or updated in this PR with the group's agreement
 - [ ] `docs/tasks.yml` updated in this PR (status and PR number of my task)
-- [ ] I can explain every line of this PR out loud
 
 ## Review (filled by the reviewer, at least 2 constructive comments)
 

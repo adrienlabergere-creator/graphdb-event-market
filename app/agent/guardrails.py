@@ -68,10 +68,34 @@ def load_schema(path: Path = CONTRACT) -> dict[str, set[str]]:
     return {"labels": labels, "relationships": rel_types, "properties": props}
 
 
+@lru_cache
+def load_relation_endpoints(path: Path = CONTRACT) -> dict[str, set[tuple[str, str]]]:
+    """Directed (source, target) label pairs of each relationship, parsed from the patterns of the contract.
+
+    `(:Event)-[:OCCURRED_IN]->(:Country)` gives `{"OCCURRED_IN": {("Event", "Country")}}`, so the contract file
+    stays the single source of truth for names and directions alike.
+    """
+    endpoints: dict[str, set[tuple[str, str]]] = {}
+    for line in path.read_text(encoding="utf-8").splitlines():
+        cells = [c.strip() for c in line.strip().strip("|").split("|")]
+        if "[:" not in cells[0]:
+            continue
+        for source, rel, target in re.findall(r"\(:(\w+)\)-\[:(\w+)\]->\(:(\w+)\)", cells[0]):
+            endpoints.setdefault(rel, set()).add((source, target))
+    return endpoints
+
+
 def strip_comments(query: str) -> str:
-    """Remove Cypher comments (`// ...` and `/* ... */`)."""
-    query = re.sub(r"//[^\n]*", " ", query)
-    return re.sub(r"/\*.*?\*/", " ", query, flags=re.S)
+    """Remove Cypher comments while preserving quoted strings and identifiers."""
+    tokens = r"'(?:\\.|[^'\\])*'|\"(?:\\.|[^\"\\])*\"|`(?:``|[^`])*`|//[^\n]*|/\*.*?\*/"
+
+    def replace(match: re.Match[str]) -> str:
+        token = match.group(0)
+        if token.startswith(("//", "/*")):
+            return " " + "\n" * token.count("\n")
+        return token
+
+    return re.sub(tokens, replace, query, flags=re.S)
 
 
 def _blank_strings(query: str) -> str:
@@ -107,6 +131,38 @@ def check_schema(query: str, schema: dict[str, set[str]] | None = None) -> None:
     for prop in re.findall(r"\b[A-Za-z_]\w*\.(\w+)\b(?!\s*\()", clean) + re.findall(r"\{\s*(\w+)\s*:", clean):
         if prop not in schema["properties"]:
             raise GuardrailError(f"Unknown property: {prop}")
+    check_relationship_endpoints(clean)
+
+
+def check_relationship_endpoints(clean: str, endpoints: dict[str, set[tuple[str, str]]] | None = None) -> None:
+    """Reject a typed one-hop pattern when its labels or direction contradict the contract.
+
+    `clean` must come from `_blank_strings`, so parentheses inside string literals are already gone. A node may
+    contain one level of parentheses, such as `{date: date('2024-06-01')}`. Coverage is deliberately partial:
+    the check only applies when both node labels and the relationship type are written, and it skips
+    variable-length hops, nodes with nested function calls such as `f(g(x))`, and relationship property maps
+    that contain `]`. Those patterns still go through the allow-list, the schema names, the depth bound and LIMIT.
+    """
+    endpoints = endpoints or load_relation_endpoints()
+    node = r"\(((?:[^()]|\([^()]*\))*)\)"
+    pattern = node + r"\s*(<-|-)\s*\[([^]]*)\]\s*(->|-)\s*" + node
+    for match in re.finditer(f"(?={pattern})", clean):
+        left, left_arrow, rel_body, right_arrow, right = match.groups()
+        left_label = re.search(r":\s*(\w+)", left.split("{", 1)[0])
+        right_label = re.search(r":\s*(\w+)", right.split("{", 1)[0])
+        rel_type = re.search(r":\s*(\w+)", rel_body)
+        if not (left_label and right_label and rel_type) or "*" in rel_body:
+            continue
+        allowed = endpoints.get(rel_type.group(1))
+        if allowed is None:
+            continue
+        pair = (left_label.group(1), right_label.group(1))
+        if left_arrow == "<-" and right_arrow == "-":
+            pair = pair[::-1]
+        elif (left_arrow, right_arrow) != ("-", "->") and pair[::-1] in allowed:
+            continue
+        if pair not in allowed:
+            raise GuardrailError(f"Invalid endpoints or direction for {rel_type.group(1)}: {pair}")
 
 
 def check_depth(query: str) -> None:

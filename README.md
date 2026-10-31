@@ -160,7 +160,7 @@ The agent only calls four tools (`graph_query`, `correlation`, `timeline`, `expl
 | `make status` | Where the project stands, next task (`WHO=Firstname`) |
 | `make test` | Runs pytest with coverage |
 | `make lint` | Runs pylint (score at least 9.5) |
-| `make traces` | Records the six demo questions for the demo UI Replay (`IDS="brent-march ..."` for some) |
+| `make traces` | Records the demo questions for the demo UI Replay (`IDS="vix-march ..."` for some) |
 | `make snapshot` | Saves the graph backbone for the public, replay-only build of the demo UI |
 | `make clean` | Removes caches |
 
@@ -177,6 +177,14 @@ docker pull ghcr.io/victorhenz241-eng/graphdb-event-market-api:0.1.1
 `make docker-up` builds the same image locally from the `Dockerfile`, under the name set by `API_IMAGE` in `.env`
 (`event-market-graph-api:dev`), so local builds never overwrite the published tags. It contains only the application
 code, the scripts and the graph contract: no `.env`, no data, no key (see `.dockerignore`).
+
+## Final deliverables
+
+The [final technical report](docs/final_report.md), [browser-based defense slides](docs/defense_slides.html)
+([PDF version](docs/defense_slides.pdf)),
+[agent evaluation](docs/llm_guardrails.md) and [measured query plans](docs/benchmarks.md) collect the evidence for the
+defense. Open the slides locally in a browser; use the left and right arrow keys to move between them, or press `P`
+to print them.
 
 ## Team contributions
 

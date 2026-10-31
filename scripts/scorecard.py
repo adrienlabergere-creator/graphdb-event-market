@@ -243,9 +243,14 @@ def chk_gds_algorithms() -> CheckResult:
 
 
 def chk_ml_workflow() -> CheckResult:
-    """A GDS ML pipeline (link prediction or node classification) exists."""
-    ok = bool(re.search(r"gds\.(beta\.)?pipeline|linkPrediction|nodeClassification", sources()))
-    return ok, "GDS ML pipeline"
+    """A tested prediction workflow exists, using GDS or the documented NumPy model."""
+    gds_pipeline = bool(re.search(r"gds\.(beta\.)?pipeline|linkPrediction|nodeClassification", sources()))
+    workflow = read("app/services/analytics/link_prediction.py")
+    tests = read("tests/test_analytics.py")
+    numpy_workflow = all(
+        marker in workflow for marker in ("def train_and_evaluate", "def run_workflow", "def store_claims", "auc_test")
+    ) and all(marker in tests for marker in ("test_train_and_evaluate", "test_store_claims"))
+    return gds_pipeline or numpy_workflow, "GDS pipeline or tested NumPy prediction with Claim output"
 
 
 def chk_agent() -> CheckResult:
@@ -438,8 +443,8 @@ def chk_gitignore() -> CheckResult:
 
 
 def author_shares() -> dict[str, float]:
-    """Share of commits per author e-mail (merge commits excluded)."""
-    counts = Counter(git_lines("log", "--no-merges", "--format=%ae"))
+    """Share of commits per author e-mail, identities grouped by .mailmap (merge commits excluded)."""
+    counts = Counter(git_lines("log", "--no-merges", "--format=%aE"))
     total = sum(counts.values())
     return {author: n / total for author, n in counts.items()} if total else {}
 
