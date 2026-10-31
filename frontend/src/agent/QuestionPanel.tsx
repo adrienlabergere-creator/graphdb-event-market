@@ -48,8 +48,10 @@ export default function QuestionPanel(props: Props) {
   const { mode, setMode, status, available, activeId, onAsk, onStop, onDownload, theme, setTheme } = props
   const [text, setText] = useState('')
   const running = status === 'running'
-  const answers = PRESETS.filter((p) => !p.shows.startsWith('Guardrail'))
-  const guardrails = PRESETS.filter((p) => p.shows.startsWith('Guardrail'))
+  // The public build has no backend: a question without a recording could never run there, so it is not listed.
+  const shown = STATIC ? PRESETS.filter((p) => available.has(p.id)) : PRESETS
+  const answers = shown.filter((p) => !p.shows.startsWith('Guardrail'))
+  const guardrails = shown.filter((p) => p.shows.startsWith('Guardrail'))
 
   const row = (p: Preset) => {
     const disabled = running || (mode === 'replay' && !available.has(p.id))

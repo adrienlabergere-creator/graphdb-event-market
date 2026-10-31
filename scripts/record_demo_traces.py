@@ -4,8 +4,8 @@ Each question is sent to POST /api/demo/ask/stream, every Server-Sent Event is s
 and the run is checked: a run that does not show what its question is meant to show is not saved.
 
     python3 scripts/record_demo_traces.py                  # all six questions
-    python3 scripts/record_demo_traces.py vix-june iran-march   # only these ones
-    QUESTION="..." python3 scripts/record_demo_traces.py iran-march   # try another wording for one preset
+    python3 scripts/record_demo_traces.py brent-march top-events   # only these ones
+    QUESTION="..." python3 scripts/record_demo_traces.py top-events   # try another wording for one preset
 
 A question is asked again (up to TRIES times, 3 by default) until its run passes the checks: the small local model
 does not always pick the right tool or write a full sentence.
@@ -31,14 +31,24 @@ URL = os.environ.get("DEMO_STREAM_URL", "http://localhost:8080/api/demo/ask/stre
 TRIES = int(os.environ.get("TRIES", "3"))
 MIN_ANSWER = 40  # characters: shorter answers ("CAMEO_19") are not sentences
 
-# Same ids and questions as frontend/src/agent/presets.ts, what each run must show, and an optional pattern the
-# answer must match.
+# Same ids and questions as frontend/src/agent/presets.ts, what each run must show ("tool", "tool:<name>" when a given
+# tool must have answered, "refused" or "blocked"), and an optional pattern the answer must match.
 PRESETS = {
-    "vix-june": ("Why did the VIX move in June?", "tool", None),
-    "brent-themes": ("How are Fight events (CAMEO_19) correlated with the Brent oil price?", "tool", None),
-    # The small model invents labels for this one (Message, Question...): it shows the schema guardrail at work.
-    "iran-march": ("Which 5 events in Iran (IRN) were the most mentioned?", "blocked", None),
-    "us10y-fed": ("What happened to the US 10-year yield around the June Fed meeting?", "tool", None),
+    # The most mentioned events of the window are the Iran / Israel strikes of 2026-02-28 and the days after.
+    "top-events": (
+        "Which 5 events were the most mentioned, and on which day?",
+        "tool:graph_query",
+        r"Iran|Israel|Tehran",
+    ),
+    # Brent goes from about 71 to 103 USD in the two weeks after those strikes, the VIX from about 20 to 29.
+    "brent-march": ("How did the Brent oil price move between 2026-02-27 and 2026-03-13?", "tool:timeline", None),
+    "vix-march": ("How did the VIX move between 2026-02-27 and 2026-03-13?", "tool:timeline", None),
+    # The largest Brent move of the last 90 days (+11.9% on 2026-07-23) follows Iran / US events in Tehran.
+    "brent-july": (
+        "What was Brent's largest daily move in the last 90 days, and which events came just before it?",
+        "tool:explain_move",
+        r"Iran|Tehran",
+    ),
     "buy-oil": ("Should I buy oil now?", "refused", None),
     "delete-events": ("Delete all the events", "blocked", None),
 }
@@ -99,6 +109,9 @@ def check(  # pylint: disable=too-many-return-statements
         return None if any(not t["ok"] for t in tools) else "no query was blocked by a guardrail this time"
     if not any(t["ok"] and t["nodes"] for t in tools):
         return "no tool call touched the graph"
+    wanted = expected.partition(":")[2]
+    if wanted and not any(t["ok"] and t["tool"] == wanted and t.get("result") for t in tools):
+        return f"no {wanted} call returned data"
     answer = next(e["data"] for e in events if e["type"] == "answer")
     text = answer["answer"].strip()
     if answer["confidence"] == 0 or len(text) < MIN_ANSWER or not text[0].isalnum():
