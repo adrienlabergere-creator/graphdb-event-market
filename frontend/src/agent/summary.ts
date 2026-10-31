@@ -89,14 +89,49 @@ function fromCorrelation(t: ToolData, lookup: Lookup): Summary | null {
 }
 
 function fromTimeline(t: ToolData, lookup: Lookup): Summary | null {
-  const rows = ((t.result as { day: string; ret_1d: number | null }[]) ?? []).filter((r) => r.ret_1d !== null)
+  const all = (t.result as { day: string; close: number | null; ret_1d: number | null }[]) ?? []
+  const rows = all.filter((r) => r.ret_1d !== null)
   const series = String(t.arguments.series_id ?? '').toUpperCase()
   if (!rows.length || !series) return null
   const big = rows.reduce((a, b) => (Math.abs(b.ret_1d!) > Math.abs(a.ret_1d!) ? b : a))
+  const closes = all.filter((r) => r.close !== null)
+  const first = closes[0]
+  const last = closes[closes.length - 1]
+  let lead: string | undefined
+  if (first && last && first !== last) {
+    const change = isRate(series, lookup)
+      ? `${signed(last.close! - first.close!)} percentage points`
+      : `${last.close! >= first.close! ? '+' : '−'}${Math.abs((last.close! / first.close! - 1) * 100).toFixed(1)}%`
+    lead = `From ${first.close} on ${fmtDay(first.day)} to ${last.close} on ${fmtDay(last.day)}: ${change} over the period.`
+  }
   return {
     tone: 'answer',
     headline: `${moveText(series, big.ret_1d!, lookup)} on ${fmtDay(big.day)}, the largest daily move between ${fmtDay(String(t.arguments.start))} and ${fmtDay(String(t.arguments.end))}.`,
+    lead,
   }
+}
+
+// Rows of a model-written query: when they carry an event title, list them (with a date and mention count if present).
+function fromGraphQuery(t: ToolData): Summary | null {
+  const rows = Array.isArray(t.result) ? (t.result as Record<string, unknown>[]) : []
+  if (!rows.length) return null
+  const field = (row: Record<string, unknown>, suffix: string) =>
+    Object.keys(row).find((k) => k === suffix || k.endsWith(`.${suffix}`) || k.endsWith(`_${suffix}`))
+  const titleKey = field(rows[0], 'title')
+  const count = `The graph returned ${rows.length} row${rows.length > 1 ? 's' : ''}.`
+  if (!titleKey) return { tone: 'answer', headline: count }
+  const items = rows.slice(0, 5).map((row) => {
+    const dateKey = field(row, 'date') ?? field(row, 'day')
+    const mentionsKey = field(row, 'num_mentions') ?? field(row, 'mentions')
+    const meta = [
+      dateKey && row[dateKey] ? fmtDay(String(row[dateKey])) : '',
+      mentionsKey && row[mentionsKey] != null ? `${Number(row[mentionsKey]).toLocaleString('en-GB')} mentions` : '',
+    ]
+      .filter(Boolean)
+      .join(' · ')
+    return { title: prettyTitle(String(row[titleKey])), meta }
+  })
+  return { tone: 'answer', headline: count, lead: 'Events in the result:', items }
 }
 
 function explainBlock(error: string): string {
@@ -129,9 +164,9 @@ export function summarise(events: TimedEvent[], lookup: Lookup): Summary {
       headline: 'Blocked before it reached Neo4j: the graph was never touched.',
       note: explainBlock(blocked.error ?? ''),
     }
-  const rows = ok.find((t) => t.tool === 'graph_query')
-  if (rows && Array.isArray(rows.result) && rows.result.length)
-    return { tone: 'answer', headline: `The graph returned ${rows.result.length} row${rows.result.length > 1 ? 's' : ''}.` }
+  const query = ok.find((t) => t.tool === 'graph_query' && Array.isArray(t.result) && t.result.length)
+  const fromQuery = query && fromGraphQuery(query)
+  if (fromQuery) return fromQuery
   return { tone: 'empty', headline: 'The agent found no usable data in the graph for this question.' }
 }
 

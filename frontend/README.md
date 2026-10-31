@@ -20,7 +20,7 @@ header from `API_KEY` in the repo's `.env`, so the key never reaches the browser
 
 To record the six presets at once, from the repo root with the stack running: `make traces`. Each run is checked
 (the refusal is refused, the write query is blocked, the other answers touched the graph) and only good runs are saved
-to `public/traces/`. Retry some with `make traces IDS="vix-june iran-march"`. A single live run can also be saved from
+to `public/traces/`. Retry some with `make traces IDS="brent-march top-events"`. A single live run can also be saved from
 the page with **Save this run as a recording**, then moved to `public/traces/`.
 
 ## What the page shows
@@ -35,7 +35,7 @@ the page with **Save this run as a recording**, then moved to `public/traces/`.
 ## Public build (Vercel)
 
 `npm run build:static` makes a version with no backend at all: the graph comes from `public/data/graph.json`
-(`make snapshot` from the repo root, stack running) and the agent runs are the recordings in `public/traces/`. Live
+(`make snapshot` from the repo root, stack running) and the agent runs are the recordings in `public/traces/` (a preset without one is not listed). Live
 mode, the question box and every call to the API are left out of the bundle, so the published page has nothing to
 abuse: no API key, no model, no database. `vercel.json` (project root: `frontend`) builds it this way and adds strict
 security headers (Content-Security-Policy, no framing, no sniffing, HSTS).

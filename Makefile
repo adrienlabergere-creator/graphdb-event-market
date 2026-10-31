@@ -30,7 +30,7 @@ help:
 	@echo "  make format        Run black (line length 120)"
 	@echo "  make status        Where the project stands (WHO=Firstname for your next task)"
 	@echo "  make score         Check the grading checklist automatically"
-	@echo "  make traces        Record the demo questions for the demo UI Replay (IDS=\"vix-june ...\" to retry some)"
+	@echo "  make traces        Record the demo questions for the demo UI Replay (IDS=\"vix-march ...\" to retry some)"
 	@echo "  make snapshot      Save the graph backbone for the public (Vercel) build of the demo UI"
 	@echo "  make healthcheck   Call /health and /health/db through the reverse proxy"
 	@echo "  make clean         Remove caches and temp files"

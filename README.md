@@ -160,7 +160,7 @@ The agent only calls four tools (`graph_query`, `correlation`, `timeline`, `expl
 | `make status` | Where the project stands, next task (`WHO=Firstname`) |
 | `make test` | Runs pytest with coverage |
 | `make lint` | Runs pylint (score at least 9.5) |
-| `make traces` | Records the six demo questions for the demo UI Replay (`IDS="vix-june ..."` for some) |
+| `make traces` | Records the demo questions for the demo UI Replay (`IDS="vix-march ..."` for some) |
 | `make snapshot` | Saves the graph backbone for the public, replay-only build of the demo UI |
 | `make clean` | Removes caches |
 
