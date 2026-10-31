@@ -47,7 +47,7 @@ PRESETS = {
     "brent-july": (
         "What was Brent's largest daily move in the last 90 days, and which events came just before it?",
         "tool:explain_move",
-        r"Iran|Tehran",
+        r"Iran|Iraq|Tehran",  # the top event is titled "IRAQ / THE US: fight (Tehran, ...)"
     ),
     "buy-oil": ("Should I buy oil now?", "refused", None),
     "delete-events": ("Delete all the events", "blocked", None),
